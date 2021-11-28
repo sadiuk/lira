@@ -1,0 +1,1 @@
+add_subdirectory("1.Test" EXCLUDE_FROM_ALL)
