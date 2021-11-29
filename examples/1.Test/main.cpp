@@ -1,12 +1,11 @@
-#include <memory>
-#include <vector>
 import lira.ui.IWindow;
 import lira.ui.platform.GLFW.WindowGLFW;
 import lira.graphics.IGraphicsContext;
-
+import std.core;
+import std.memory;
 int main()
 {
-	lira::ui::IWindow::CreationParams params;
+	lira::ui::IWindow::CreationParams params; 
 	params.width = 600;
 	params.height = 400;
 	params.caption = "Test";

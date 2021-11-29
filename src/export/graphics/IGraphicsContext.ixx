@@ -1,6 +1,5 @@
-#include <memory> // TODO: remove when VS can handle standart modules without build errors
 export module lira.graphics.IGraphicsContext;
-//import std.memory;
+import std.memory;
 
 export namespace lira::graphics
 {

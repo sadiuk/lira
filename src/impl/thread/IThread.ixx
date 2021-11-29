@@ -1,6 +1,5 @@
-#include <thread>
 export module lira.thread.IThread;
-
+import std.threading;
 export namespace lira::thread
 {
 	class IThread

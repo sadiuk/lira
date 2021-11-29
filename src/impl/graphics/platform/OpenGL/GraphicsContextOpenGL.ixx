@@ -1,9 +1,8 @@
-#include <vector>
-
 export module lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import lira.graphics.IGraphicsContext;
 import lira.thread.IThreadRequestProcessor;
 import lira.ui.IWindow;
+import std.core;
 export namespace lira::graphics
 {
 	enum class ERequestType
@@ -29,7 +28,6 @@ export namespace lira::graphics
 
 	class GraphicsContextOpenGL : public IGraphicsContext, public thread::IThreadRequestProcessor<GLRequest>
 	{
-		std::vector<int> vec;
 	protected:
 		void ProcessRequest(const GLRequest& r);
 	public:

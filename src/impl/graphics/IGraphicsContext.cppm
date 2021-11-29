@@ -1,8 +1,8 @@
-#include <memory> // TODO: remove when VS can handle standart modules without build errors
+#include <cassert>
 module lira.graphics.IGraphicsContext;
 import lira.graphics.IGraphicsContext; // dafuq why doesn't it compile without this import if it's the same module??
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
-//import std.memory;
+import std.memory;
 
 namespace lira::graphics
 {
@@ -16,5 +16,6 @@ namespace lira::graphics
 			break;
 		}
 		}
+		assert(false);
 	}
 }

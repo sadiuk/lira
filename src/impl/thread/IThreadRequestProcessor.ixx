@@ -1,9 +1,7 @@
-#include <mutex>
-#include <queue>
-
 export module lira.thread.IThreadRequestProcessor;
 import lira.thread.IThread;
-
+import std.core;
+import std.threading;
 export namespace lira::thread
 {
 	template<typename Request>

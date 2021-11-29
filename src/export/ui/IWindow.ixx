@@ -1,6 +1,5 @@
-#include <string>  // TODO: remove when VS can handle standart modules without build errors
 export module lira.ui.IWindow;
-
+import std.core;
 export namespace lira::ui
 {
 	class IWindow
