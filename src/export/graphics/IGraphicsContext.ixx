@@ -4,24 +4,25 @@ import lira.ui.IWindow;
 
 export namespace lira::graphics
 {
+	enum EAPIType
+	{
+		OPENGL
+	};
+	enum EFBOAttachmentType : uint8_t
+	{
+		COLOR_BUFFER = 1,
+		DEPTH_BUFFER = 2,
+		STENCIL_BUFFER = 4
+	};
 	class IGraphicsContext
 	{
 	public:
-		enum EAPIType
-		{
-			OPENGL
-		};
 		struct CreationParams
 		{
 			EAPIType apiType;
 			ui::IWindow* window;
 		};
-		enum EFBOAttachmentType : uint8_t
-		{
-			COLOR_BUFFER = 1,
-			DEPTH_BUFFER = 2,
-			STENCIL_BUFFER = 4
-		};
+		
 		static std::shared_ptr<IGraphicsContext> Create(const CreationParams& params);
 
 		virtual void SwapBuffers(lira::ui::IWindow* window) = 0;

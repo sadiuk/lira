@@ -12,7 +12,7 @@ int main()
 	auto window = std::make_shared<lira::ui::WindowGLFW>(wndParams);
 
 	lira::graphics::IGraphicsContext::CreationParams ctxParams;
-	ctxParams.apiType = lira::graphics::IGraphicsContext::EAPIType::OPENGL;
+	ctxParams.apiType = lira::graphics::EAPIType::OPENGL;
 	ctxParams.window = window.get();
 	auto context = lira::graphics::IGraphicsContext::Create(ctxParams);
 
@@ -21,7 +21,7 @@ int main()
 	{
 		window->PollEvents();
 
-		context->Clear(lira::graphics::IGraphicsContext::COLOR_BUFFER);
+		context->Clear(lira::graphics::COLOR_BUFFER);
 		
 		context->SwapBuffers(window.get());
 	}
