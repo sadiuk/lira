@@ -4,17 +4,30 @@ import std.core;
 import std.threading;
 export namespace lira::thread
 {
-	template<typename Request>
+	struct IRequestBase
+	{
+		bool finished = false;
+		void Notify()
+		{
+			finished = true;
+		}
+		void Wait()
+		{
+			// is spinlocking a better a better option with such short requests?
+			while(finished != true);
+		}
+		virtual ~IRequestBase() {}
+	};
+	template<typename Request> requires std::derived_from<Request, IRequestBase>
 	class IThreadRequestProcessor : public IThread
 	{
 		std::mutex m;
-		std::queue<Request> m_request_queue;
+		std::queue<Request*> m_request_queue;
 		bool keepRunning = true;
 	private:
-		Request Pop()
+		Request* Pop()
 		{
-			(void)std::unique_lock(m);
-			auto el = m_request_queue.front();
+			auto* el = m_request_queue.front();
 			m_request_queue.pop();
 			return el;
 		}
@@ -23,25 +36,31 @@ export namespace lira::thread
 		{
 			while (keepRunning)
 			{
+				std::lock_guard g(m);
 				if (!m_request_queue.empty())
 				{
-					auto req = Pop();
-					ProcessRequest(req);
+					auto* req = Pop();
+					ProcessRequest(*req);
+					req->Notify();
 				}
 			}
 		}
 		virtual void ProcessRequest(const Request& r) = 0;
 	public:
-		virtual ~IThreadRequestProcessor() = default;
+		virtual ~IThreadRequestProcessor() 
+		{
+			keepRunning = false;
+			std::lock_guard g(m);
+		}
 		void stop()
 		{
 			keepRunning = false;
 		}
 
-		void Push(const Request& r)
+		void Push(Request* r)
 		{
-			(void)std::unique_lock(m);
 			m_request_queue.push(r);
+			r->Wait();
 		}
 	};
 }

@@ -19,8 +19,9 @@ export namespace lira::ui
 
 		virtual bool IsOpen() const = 0;
 		virtual void PollEvents() = 0;
+		virtual void SwapBuffers() = 0;
 		
-		~IWindow() = default;
+		virtual ~IWindow() = default;
 	protected:
 		uint16_t m_width, m_height;
 		std::string m_caption;

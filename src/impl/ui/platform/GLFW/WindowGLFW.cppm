@@ -17,6 +17,10 @@ namespace lira::ui
 			createdProperly = false;
 		}
 	}
+	WindowGLFW::~WindowGLFW()
+	{
+		glfwDestroyWindow(m_native);
+	}
 
 	bool WindowGLFW::IsOpen() const
 	{
@@ -26,5 +30,9 @@ namespace lira::ui
 	void WindowGLFW::PollEvents()
 	{
 		glfwPollEvents();
+	}
+	void WindowGLFW::SwapBuffers()
+	{
+		glfwSwapBuffers(m_native);
 	}
 }
