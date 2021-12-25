@@ -9,12 +9,12 @@ namespace lira::ui
 	{
 		if (!glfwInit())
 		{
-			createdProperly = false;
+			m_createdProperly = false;
 		}
 		m_native = glfwCreateWindow(m_width, m_height, m_caption.c_str(), nullptr, nullptr);
 		if (!m_native)
 		{
-			createdProperly = false;
+			m_createdProperly = false;
 		}
 	}
 	WindowGLFW::~WindowGLFW()

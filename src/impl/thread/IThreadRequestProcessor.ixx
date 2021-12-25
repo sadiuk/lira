@@ -21,23 +21,23 @@ export namespace lira::thread
 	template<typename Request> requires std::derived_from<Request, IRequestBase>
 	class IThreadRequestProcessor : public IThread
 	{
-		std::mutex m;
-		std::queue<Request*> m_request_queue;
-		bool keepRunning = true;
+		std::mutex m_mutex;
+		std::queue<Request*> m_requestQueue;
+		bool m_keepRunning = true;
 	private:
 		Request* Pop()
 		{
-			auto* el = m_request_queue.front();
-			m_request_queue.pop();
+			auto* el = m_requestQueue.front();
+			m_requestQueue.pop();
 			return el;
 		}
 	protected:
 		void run() override
 		{
-			while (keepRunning)
+			while (m_keepRunning)
 			{
-				std::lock_guard g(m);
-				if (!m_request_queue.empty())
+				std::lock_guard g(m_mutex);
+				if (!m_requestQueue.empty())
 				{
 					auto* req = Pop();
 					ProcessRequest(*req);
@@ -49,17 +49,17 @@ export namespace lira::thread
 	public:
 		virtual ~IThreadRequestProcessor() 
 		{
-			keepRunning = false;
-			std::lock_guard g(m);
+			m_keepRunning = false;
+			std::lock_guard g(m_mutex);
 		}
 		void stop()
 		{
-			keepRunning = false;
+			m_keepRunning = false;
 		}
 
 		void Push(Request* r)
 		{
-			m_request_queue.push(r);
+			m_requestQueue.push(r);
 			r->Wait();
 		}
 	};

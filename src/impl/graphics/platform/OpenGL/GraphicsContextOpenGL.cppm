@@ -1,11 +1,12 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include <cassert>
 module lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
+import lira.graphics.platform.OpenGL.ShaderOpenGL;
+import lira.graphics.platform.OpenGL.BufferOpenGL;
 import lira.graphics.IGraphicsContext;
 import lira.ui.platform.GLFW.WindowGLFW;
-
-
 namespace lira::graphics
 {
 	GraphicsContextOpenGL::GraphicsContextOpenGL(const CreationParams& params)
@@ -33,17 +34,132 @@ namespace lira::graphics
 	{
 		glClearStencil(s);
 	}
-	void GraphicsContextOpenGL::Clear(EFBOAttachmentType t)
+	void GraphicsContextOpenGL::Clear(std::underlying_type_t<EFBOAttachmentType> t)
 	{
 		glClear(getNativeAttachmentType(t));
 	}
-	uint32_t GraphicsContextOpenGL::getNativeAttachmentType(EFBOAttachmentType t)
+	void GraphicsContextOpenGL::Draw(DrawIndexedParams&& params)
 	{
-		switch (t)
+		uint32_t nativeMode = getNativeDrawingMode(params.mode);
+		uint32_t nativeDataType = getNativeDataType(params.dataType);
+		glDrawElementsInstancedBaseVertexBaseInstance(
+			nativeMode,
+			params.count,
+			nativeDataType,
+			nullptr,
+			params.instanceCount,
+			params.baseVertex,
+			params.baseInstance
+		);
+	}
+	std::shared_ptr<IShader> GraphicsContextOpenGL::CreateShader(EShaderStage s, const std::string_view& source)
+	{
+		return std::make_shared<ShaderOpenGL>(s, source);
+	}
+	std::shared_ptr<IBuffer> GraphicsContextOpenGL::CreateBuffer()
+	{
+		return std::shared_ptr<BufferOpenGL>();
+	}
+	void GraphicsContextOpenGL::AllocateBuffer(IBuffer* buffer, uint32_t sizeInBytes, const void* data)
+	{
+		auto* native_ptr = static_cast<BufferOpenGL*>(buffer);
+		glNamedBufferData(native_ptr->GetId(), sizeInBytes, data, GL_STATIC_DRAW); // TODO: add HINT param ??
+	}
+	void GraphicsContextOpenGL::FillBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, const void* data)
+	{
+		auto* native_ptr = static_cast<BufferOpenGL*>(buffer);
+		glNamedBufferSubData(native_ptr->GetId(), offset, size, data);
+	}
+	void GraphicsContextOpenGL::MemsetBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, uint8_t data)
+	{
+		auto* native_ptr = static_cast<BufferOpenGL*>(buffer);
+		glClearNamedBufferData(native_ptr->GetId(), GL_R8UI, GL_R8UI, GL_UNSIGNED_BYTE, &data);
+	}
+	void GraphicsContextOpenGL::BindVertexBuffer(IBuffer* buffer)
+	{
+		auto* native_ptr = static_cast<BufferOpenGL*>(buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, native_ptr->GetId());
+	}
+	uint32_t GraphicsContextOpenGL::getNativeAttachmentType(std::underlying_type_t<EFBOAttachmentType> t)
+	{
+		uint32_t res = 0;
+		if (t & EFBOAttachmentType::COLOR_BUFFER)
 		{
-		case EFBOAttachmentType::COLOR_BUFFER: return GL_COLOR_BUFFER_BIT;
-		case EFBOAttachmentType::DEPTH_BUFFER: return GL_DEPTH_BUFFER_BIT;
-		case EFBOAttachmentType::STENCIL_BUFFER: return GL_STENCIL_BUFFER_BIT;
+			res |= GL_COLOR_BUFFER_BIT;
+		}
+		if (t & EFBOAttachmentType::DEPTH_BUFFER)
+		{
+			res |= GL_DEPTH_BUFFER_BIT;
+		}
+		if (t & EFBOAttachmentType::STENCIL_BUFFER)
+		{
+			res |= GL_STENCIL_BUFFER_BIT;
+		}
+		return res;
+	}
+	uint32_t GraphicsContextOpenGL::getNativeShaderStage(EShaderStage s)
+	{
+		switch (s)
+		{
+			case VERTEX:
+			{
+				return GL_VERTEX_SHADER;
+			}
+			case FRAGMENT:
+			{
+				return GL_FRAGMENT_SHADER;
+			}
+			case TESSELATION_EVALUATION:
+			{
+				return GL_TESS_EVALUATION_SHADER;
+			}
+			case TESSELATION_CONTROL:
+			{
+				return GL_TESS_CONTROL_SHADER;
+			}
+			case GEOMETRY:
+			{
+				return GL_GEOMETRY_SHADER;
+			}
+			case COMPUTE:
+			{
+				return GL_COMPUTE_SHADER;
+			}
+		}
+		assert(false);
+	}
+	uint32_t GraphicsContextOpenGL::getNativeDrawingMode(EDrawMode mode)
+	{
+		switch (mode)
+		{
+		case POINTS: return GL_POINTS;
+		case LINE_STRIP: return GL_LINE_STRIP;
+		case LINE_LOOP: return GL_LINE_LOOP;
+		case LINES: return GL_LINES;
+		case LINE_STRIP_ADJACENCY: return GL_LINE_STRIP_ADJACENCY;
+		case LINES_ADJACENCY: return GL_LINES_ADJACENCY;
+		case TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
+		case TRIANGLE_FAN: return GL_TRIANGLE_FAN;
+		case TRIANGLES: return GL_TRIANGLES;
+		case TRIANGLE_STRIP_ADJACENCY: return GL_TRIANGLE_STRIP_ADJACENCY;
+		case TRIANGLES_ADJACENCY: return GL_TRIANGLES_ADJACENCY;
+		case PATCHES: return GL_PATCHES;
+		default:
+			assert(false);
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeDataType(EDataType dt)
+	{
+		switch (dt)
+		{
+		case INT8: return GL_BYTE;
+		case UINT8: return GL_UNSIGNED_BYTE;
+		case INT16: return GL_SHORT;
+		case UINT116: return GL_UNSIGNED_SHORT;
+		case INT32: return GL_INT;
+		case UINT32: return GL_UNSIGNED_INT;
+		default:
+			assert(false); // TODO other type enums
 		}
 	}
 }

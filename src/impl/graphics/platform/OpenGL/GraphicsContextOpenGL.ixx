@@ -18,9 +18,24 @@ export namespace lira::graphics
 		void SetClearColor(float r, float g, float b, float a) override;
 		void SetClearDepth(float d) override;
 		void SetClearStencil(float s) override;
-		void Clear(EFBOAttachmentType t) override;
+		void Clear(std::underlying_type_t<EFBOAttachmentType> t) override;
+		void Draw(DrawIndexedParams&& params) override;
+
+		std::shared_ptr<IShader> CreateShader(EShaderStage stage, const std::string_view& source) override;
+
+		std::shared_ptr<IBuffer> CreateBuffer() override;
+		void AllocateBuffer(IBuffer* buffer, uint32_t sizeInBytes, const void* data = nullptr) override;
+		void FillBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, const void* data) override;
+		void MemsetBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, uint8_t data) override;
+
+		void BindVertexBuffer(IBuffer* buffer) override;
+
 	private:
-		uint32_t getNativeAttachmentType(EFBOAttachmentType t);
+		uint32_t getNativeAttachmentType(std::underlying_type_t<EFBOAttachmentType> t);
+	public:
+		static uint32_t getNativeShaderStage(EShaderStage s);
+		static uint32_t getNativeDrawingMode(EDrawMode mode);
+		static uint32_t getNativeDataType(EDataType dt);
 	};
 }
 

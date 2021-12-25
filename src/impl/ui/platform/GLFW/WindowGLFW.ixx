@@ -8,7 +8,7 @@ export namespace lira::ui
 	class WindowGLFW : public IWindow
 	{
 		GLFWwindow* m_native;
-		bool createdProperly = true;
+		bool m_createdProperly = true;
 	public:
 		WindowGLFW(const CreationParams& params);
 		~WindowGLFW() override;
