@@ -11,6 +11,7 @@ namespace lira::ui
 		{
 			m_createdProperly = false;
 		}
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 		m_native = glfwCreateWindow(m_width, m_height, m_caption.c_str(), nullptr, nullptr);
 		if (!m_native)
 		{

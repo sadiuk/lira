@@ -1,3 +1,4 @@
+#include <cassert>
 export module lira.graphics.Common;
 
 import std.core;
@@ -11,6 +12,8 @@ export namespace lira::graphics
 		UINT116,
 		INT32,
 		UINT32,
+		FLOAT32,
+		FLOAT64,
 	};
 	enum EAPIType
 	{
@@ -58,4 +61,22 @@ export namespace lira::graphics
 		uint32_t baseVertex = 0;
 		uint32_t baseInstance = 0;
 	};
+
+
+	uint32_t getTypeSize(EDataType t)
+	{
+		switch (t)
+		{
+		case INT8: [[fallthrough]];
+		case UINT8: return 1;
+		case INT16: [[fallthrough]];
+		case UINT116: return 2;
+		case INT32: [[fallthrough]];
+		case FLOAT32: [[fallthrough]];
+		case UINT32: return 4;
+		case FLOAT64: return 8;
+		}
+		assert(false);
+		return 0;
+	}
 }

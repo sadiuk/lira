@@ -6,7 +6,7 @@ export namespace lira::graphics
 {
 	lira::graphics::BufferOpenGL::BufferOpenGL()
 	{
-		glGenBuffers(1, &m_id);
+		glCreateBuffers(1, &m_id);
 	}
 	lira::graphics::BufferOpenGL::~BufferOpenGL()
 	{
