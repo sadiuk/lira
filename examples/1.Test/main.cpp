@@ -3,7 +3,8 @@ import lira.ui.platform.GLFW.WindowGLFW;
 import lira.graphics.IGraphicsContext;
 import std.core;
 import std.memory;
-
+import lira.math.Vector;
+import lira.math.Types;
 
 using namespace lira::graphics;
 
@@ -41,6 +42,11 @@ void main()
 )";
 int main()
 {
+	using namespace lira::math;
+	f2 v(1, 2);
+	f2a va(1, 3);
+	auto k = dot(v, va);
+
 	lira::ui::IWindow::CreationParams wndParams; 
 	wndParams.width = 600;
 	wndParams.height = 400;

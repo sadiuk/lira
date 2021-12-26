@@ -31,10 +31,18 @@ set(LIRA_THREAD_SOURCES
 	impl/thread/IThreadRequestProcessor.ixx
 )
 
+set(LIRA_MATH_SOURCES
+	export/math/Types.ixx
+	export/math/Vector.ixx
+
+
+)
+
 add_library	(lira 
 			${LIRA_GRAPHICS_SOURCES} 
 			${LIRA_UI_SOURCES} 
 			${LIRA_THREAD_SOURCES}
+			${LIRA_MATH_SOURCES}
 			)
 target_include_directories(lira PUBLIC 
 	${LIRA_ROOT_PATH}/src
