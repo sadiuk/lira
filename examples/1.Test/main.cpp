@@ -1,3 +1,4 @@
+#include <cstdlib>
 import lira.ui.IWindow;
 import lira.ui.platform.GLFW.WindowGLFW;
 import lira.graphics.IGraphicsContext;
@@ -16,6 +17,7 @@ layout(location = 0) in vec2 pos;
 layout(location = 1) in vec3 color;
 layout(location = 0) out vec3 fragColor;
 
+uniform float rand;
 out gl_PerVertex
 {
   vec4 gl_Position;
@@ -25,7 +27,7 @@ out gl_PerVertex
 
 void main()
 {
-	fragColor = color;
+	fragColor = color * rand;
 	gl_Position = vec4(pos.x + 0.5 * gl_InstanceID, pos.y, 0, 1);
 }
 )";
@@ -46,7 +48,7 @@ int main()
 	f2 v(1, 2);
 	f2a va(1, 3);
 	auto k = dot(v, va);
-
+	//bool same = std::is_same_v<std::vector, std::array>;
 	lira::ui::IWindow::CreationParams wndParams; 
 	wndParams.width = 600;
 	wndParams.height = 400;
@@ -95,8 +97,10 @@ int main()
 
 		context->Clear(lira::graphics::COLOR_BUFFER);
 		
+		auto r = rand() / float(RAND_MAX);
 		context->BindIndexBuffer(indexBuffer.get());
 		context->BindProgramPipeline(pipeline.get());
+		pipeline->SetUniform(EShaderStage::VERTEX, "rand", r);
 		context->Draw(params);
 		context->SwapBuffers(window.get());
 	}
