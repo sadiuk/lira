@@ -8,6 +8,7 @@ export namespace lira::math
 		No SIMD operations here yet
 		*******************
 	*/ 
+
 	template<typename T>
 	concept fundamental = std::is_fundamental_v<T>;
 
@@ -21,6 +22,9 @@ export namespace lira::math
 	struct vector_unaligned<T, 1>
 	{
 		using this_type = vector_unaligned<T, 1>;
+
+		using type = T;
+		static constexpr int size = 1;
 	public:
 		vector_unaligned() {}
 		explicit vector_unaligned(T el) : x{ el } {}
@@ -49,6 +53,8 @@ export namespace lira::math
 	struct vector_unaligned<T, 2>
 	{
 		using this_type = vector_unaligned<T, 2>;
+		using type = T;
+		static constexpr int size = 2;
 	public:
 		vector_unaligned() {}
 		explicit vector_unaligned(T el1, T el2) : arr{ el1, el2 } {}
@@ -84,6 +90,8 @@ export namespace lira::math
 	struct vector_unaligned<T, 3>
 	{
 		using this_type = vector_unaligned<T, 3>;
+		using type = T;
+		static constexpr int size = 3;
 	public:
 		vector_unaligned() {}
 		explicit vector_unaligned(T el1, T el2, T el3) : arr{ el1, el2, el3 } {}
@@ -119,6 +127,8 @@ export namespace lira::math
 	struct vector_unaligned<T, 4>
 	{
 		using this_type = vector_unaligned<T, 4>;
+		using type = T;
+		static constexpr int size = 4;
 	public:
 		vector_unaligned() {}
 		explicit vector_unaligned(T el1, T el2, T el3, T el4) : arr{ el1, el2, el3, el4 } {}
@@ -203,24 +213,79 @@ export namespace lira::math
 	};
 
 
+	/*
+		Type Traits And Vector Concepts
+	*/
 
+	template <typename>
+	struct is_vector : std::false_type {};
+	template <typename>
+	struct is_vector2 : std::false_type {};
+	template <typename>
+	struct is_vector3 : std::false_type {};
+	template <typename>
+	struct is_vector4 : std::false_type {};
+
+	template <typename T, uint32_t I>
+	struct is_vector<vector_unaligned<T, I>> : std::true_type {};
+	template <typename T>
+	struct is_vector2<vector_unaligned<T, 2>> : std::true_type {};
+	template <typename T>
+	struct is_vector3<vector_unaligned<T, 3>> : std::true_type {};
+	template <typename T>
+	struct is_vector4<vector_unaligned<T, 4>> : std::true_type {};
+
+	template <typename T, uint8_t I>
+	struct is_vector<vector_aligned<T, I>> : std::true_type {};
+	template <typename T>
+	struct is_vector2<vector_aligned<T, 2>> : std::true_type {};
+	template <typename T>
+	struct is_vector3<vector_aligned<T, 3>> : std::true_type {};
+	template <typename T>
+	struct is_vector4<vector_aligned<T, 4>> : std::true_type {};
+
+	template <typename T>
+	concept any_vector = is_vector<T>::value;
+	template <typename T>
+	concept any_vector2 = is_vector2<T>::value;
+	template <typename T>
+	concept any_vector3 = is_vector3<T>::value;
+	template <typename T>
+	concept any_vector4 = is_vector4<T>::value;
+
+	// Resolve operation return type at compile time
+	template<typename T1, typename T2>
+	struct out_type
+	{
+		using type = decltype(T1::type(1) * T2::type(1));
+	};
+	template<typename T1, typename T2>
+	using out_type_t = out_type<T1, T2>::type;
 
 	// *********** Vector Functions *************
 
 	// This one works for both aligned and unaligned
-	template<fundamental T>
-	T dot(const vector_unaligned<T, 2>& lhs, const vector_unaligned<T, 2>& rhs)
+	template<any_vector2 V1, any_vector2 V2>
+	out_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y;
 	}
-	template<fundamental T>
-	T dot(const vector_unaligned<T, 3>& lhs, const vector_unaligned<T, 3>& rhs)
+	template<any_vector3 V1, any_vector3 V2>
+	out_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 	}
-	template<fundamental T>
-	T dot(const vector_unaligned<T, 4>& lhs, const vector_unaligned<T, 4>& rhs)
+	template<any_vector4 V1, any_vector4 V2>
+	out_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 	}
+
+
+	//template<any_vector V>
+	//V normalize(const any_vector& v)
+	//{
+	//
+	//}
+
 }

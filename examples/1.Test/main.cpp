@@ -45,9 +45,12 @@ void main()
 int main()
 {
 	using namespace lira::math;
-	f2 v(1, 2);
+	i2 v(1, 2);
 	f2a va(1, 3);
-	auto k = dot(v, va);
+
+	b2 b(true, false);
+	f2 f(0.5, 0.6);
+	auto k = dot(b, f);
 	//bool same = std::is_same_v<std::vector, std::array>;
 	lira::ui::IWindow::CreationParams wndParams; 
 	wndParams.width = 600;
