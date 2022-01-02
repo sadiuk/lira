@@ -1,6 +1,7 @@
 #include "glad/glad.h"
-module lira.graphics.platform.OpenGL.ProgramPipelineOpenGL;
-import lira.graphics.platform.OpenGL.ProgramPipelineOpenGL;
+#include <cassert>
+module lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
+import lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
 import lira.graphics.platform.OpenGL.ShaderOpenGL;
 import lira.graphics.platform.OpenGL.BufferOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
@@ -9,7 +10,7 @@ import std.memory;
 
 namespace lira::graphics
 {
-	int ProgramPipelineOpenGL::getCachedLocation(EShaderStage stage, const std::string_view& name)
+	int GraphicsPipelineOpenGL::getCachedLocation(EStage stage, const std::string_view& name)
 	{
 		auto it = m_cachedUniformLocations.find(std::string(name));
 		if (it != m_cachedUniformLocations.end())
@@ -26,21 +27,20 @@ namespace lira::graphics
 			return location;
 		}
 	}
-	ProgramPipelineOpenGL::ProgramPipelineOpenGL()
+	GraphicsPipelineOpenGL::GraphicsPipelineOpenGL()
 	{
 		glGenProgramPipelines(1, &m_id);
 		glGenVertexArrays(1, &m_vaoId);
 	}
-	ProgramPipelineOpenGL::~ProgramPipelineOpenGL()
+	GraphicsPipelineOpenGL::~GraphicsPipelineOpenGL()
 	{
 		glDeleteProgramPipelines(1, &m_id);
 		glDeleteVertexArrays(1, &m_vaoId);
 	}
-	void ProgramPipelineOpenGL::AttachShader(std::shared_ptr<IShader>&& shader)
+	void GraphicsPipelineOpenGL::AttachShader(std::shared_ptr<IShader>&& shader)
 	{
 		auto stage = shader->GetStage();
 		auto* shader_native = static_cast<ShaderOpenGL*>(shader.get());
-		m_shaderIDs.insert(std::make_pair(stage, shader_native->GetId()));
 		switch (stage)
 		{
 		case VERTEX:
@@ -70,12 +70,13 @@ namespace lira::graphics
 		}
 		case COMPUTE:
 		{
-			glUseProgramStages(m_id, GL_COMPUTE_SHADER_BIT, shader_native->GetId());
-			break;
+			assert(false);
+			return;
 		}
 		}
+		m_shaderIDs.insert(std::make_pair(static_cast<EStage>(stage), shader_native->GetId()));
 	}
-	void ProgramPipelineOpenGL::SetVertexAttributesLayout(const std::vector<VertexAttribute>& layout)
+	void GraphicsPipelineOpenGL::SetVertexAttributesLayout(const std::vector<VertexAttribute>& layout)
 	{
 		glBindVertexArray(m_vaoId);
 		uint32_t offset = 0;
@@ -96,7 +97,7 @@ namespace lira::graphics
 		}
 	}
 
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, float value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, float value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -106,7 +107,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::f2 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::f2 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -116,7 +117,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::f3 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::f3 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -126,7 +127,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::f4 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::f4 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -138,7 +139,7 @@ namespace lira::graphics
 	}
 
 
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, int32_t value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, int32_t value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -148,7 +149,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::i2 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::i2 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -158,7 +159,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::i3 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::i3 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -168,7 +169,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::i4 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::i4 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -179,7 +180,7 @@ namespace lira::graphics
 		return true;
 	}
 
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, uint32_t value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, uint32_t value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -189,7 +190,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::u2 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::u2 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -199,7 +200,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::u3 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::u3 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -209,7 +210,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::u4 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::u4 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -220,7 +221,7 @@ namespace lira::graphics
 		return true;
 	}
 
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, bool value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, bool value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -230,7 +231,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::b2 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::b2 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -240,7 +241,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::b3 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::b3 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;
@@ -250,7 +251,7 @@ namespace lira::graphics
 
 		return true;
 	}
-	bool ProgramPipelineOpenGL::SetUniform(EShaderStage stage, const std::string_view& name, math::b4 value)
+	bool GraphicsPipelineOpenGL::SetUniform(EStage stage, const std::string_view& name, math::b4 value)
 	{
 		int location = getCachedLocation(stage, name);
 		if (location == -1) return false;

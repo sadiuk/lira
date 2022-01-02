@@ -14,7 +14,7 @@ export namespace lira::graphics
 		GraphicsContextOpenGL(const CreationParams& params);
 		~GraphicsContextOpenGL() override;
 
-		void BindProgramPipeline(IProgramPipeline* p) override;
+		void BindProgramPipeline(IGraphicsPipeline* p) override;
 		void BindIndexBuffer(IBuffer*) override;
 
 		void SwapBuffers(lira::ui::IWindow* window) override;
@@ -26,7 +26,7 @@ export namespace lira::graphics
 
 		std::shared_ptr<IShader> CreateShader(EShaderStage stage, const std::string_view& source) override;
 		std::shared_ptr<IBuffer> CreateBuffer() override;
-		std::shared_ptr<IProgramPipeline> CreateProgramPipeline() override;
+		std::shared_ptr<IGraphicsPipeline> CreateProgramPipeline() override;
 
 		void AllocateBuffer(IBuffer* buffer, uint32_t sizeInBytes, const void* data = nullptr) override;
 		void FillBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, const void* data) override;

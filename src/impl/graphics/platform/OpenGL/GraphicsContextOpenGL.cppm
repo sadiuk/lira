@@ -3,11 +3,11 @@
 #include <cassert>
 module lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
-import lira.graphics.platform.OpenGL.ProgramPipelineOpenGL;
+import lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
 import lira.graphics.platform.OpenGL.ShaderOpenGL;
 import lira.graphics.platform.OpenGL.BufferOpenGL;
 import lira.graphics.IGraphicsContext;
-import lira.graphics.IProgramPipeline;
+import lira.graphics.IGraphicsPipeline;
 import lira.ui.platform.GLFW.WindowGLFW;
 import std.core;
 namespace lira::graphics
@@ -122,9 +122,9 @@ namespace lira::graphics
 	{
 		glfwMakeContextCurrent(nullptr);
 	}
-	void GraphicsContextOpenGL::BindProgramPipeline(IProgramPipeline* p)
+	void GraphicsContextOpenGL::BindProgramPipeline(IGraphicsPipeline* p)
 	{
-		auto nativePipeline = static_cast<ProgramPipelineOpenGL*>(p);
+		auto nativePipeline = static_cast<GraphicsPipelineOpenGL*>(p);
 		glBindVertexArray(nativePipeline->getVAOId());
 		glBindProgramPipeline(nativePipeline->getId());
 	}
@@ -174,9 +174,9 @@ namespace lira::graphics
 	{
 		return std::make_shared<BufferOpenGL>();
 	}
-	std::shared_ptr<IProgramPipeline> GraphicsContextOpenGL::CreateProgramPipeline()
+	std::shared_ptr<IGraphicsPipeline> GraphicsContextOpenGL::CreateProgramPipeline()
 	{
-		return std::make_shared<ProgramPipelineOpenGL>();
+		return std::make_shared<GraphicsPipelineOpenGL>();
 	}
 	void GraphicsContextOpenGL::AllocateBuffer(IBuffer* buffer, uint32_t sizeInBytes, const void* data)
 	{

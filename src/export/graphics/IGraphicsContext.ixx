@@ -1,5 +1,5 @@
 export module lira.graphics.IGraphicsContext;
-import lira.graphics.IProgramPipeline;
+import lira.graphics.IGraphicsPipeline;
 import lira.ui.IWindow;
 import lira.graphics.Common;
 import lira.graphics.IShader;
@@ -20,7 +20,7 @@ export namespace lira::graphics
 		
 		static std::shared_ptr<IGraphicsContext> Create(const CreationParams& params);
 
-		virtual void BindProgramPipeline(IProgramPipeline* p) = 0;
+		virtual void BindProgramPipeline(IGraphicsPipeline* p) = 0;
 		virtual void BindIndexBuffer(IBuffer*) = 0;
 		virtual void SwapBuffers(lira::ui::IWindow* window) = 0;
 		virtual void SetClearColor(float r, float g, float b, float a) = 0;
@@ -32,7 +32,7 @@ export namespace lira::graphics
 
 		virtual std::shared_ptr<IShader> CreateShader(EShaderStage stage, const std::string_view& source) = 0;
 		virtual std::shared_ptr<IBuffer> CreateBuffer() = 0;
-		virtual std::shared_ptr<IProgramPipeline> CreateProgramPipeline() = 0;
+		virtual std::shared_ptr<IGraphicsPipeline> CreateProgramPipeline() = 0;
 		
 		virtual void AllocateBuffer(IBuffer* buffer, uint32_t sizeInBytes, const void* data = nullptr) = 0;
 		virtual void FillBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, const void* data) = 0;
