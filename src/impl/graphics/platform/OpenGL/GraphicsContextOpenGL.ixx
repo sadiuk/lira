@@ -14,7 +14,8 @@ export namespace lira::graphics
 		GraphicsContextOpenGL(const CreationParams& params);
 		~GraphicsContextOpenGL() override;
 
-		void BindProgramPipeline(IGraphicsPipeline* p) override;
+		void BindGraphicsPipeline(IGraphicsPipeline* p) override;
+		void BindComputePipeline(IComputePipeline* p) override;
 		void BindIndexBuffer(IBuffer*) override;
 
 		void SwapBuffers(lira::ui::IWindow* window) override;
@@ -23,6 +24,7 @@ export namespace lira::graphics
 		void SetClearStencil(float s) override;
 		void Clear(std::underlying_type_t<EFBOAttachmentType> t) override;
 		void Draw(const DrawIndexedParams& params) override;
+		void Dispatch(uint32_t xCount, uint32_t yCount, uint32_t zCount) override;
 
 		std::shared_ptr<IShader> CreateShader(EShaderStage stage, const std::string_view& source) override;
 		std::shared_ptr<IBuffer> CreateBuffer() override;

@@ -4,6 +4,7 @@
 module lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
+import lira.graphics.platform.OpenGL.ComputePipelineOpenGL;
 import lira.graphics.platform.OpenGL.ShaderOpenGL;
 import lira.graphics.platform.OpenGL.BufferOpenGL;
 import lira.graphics.IGraphicsContext;
@@ -122,10 +123,15 @@ namespace lira::graphics
 	{
 		glfwMakeContextCurrent(nullptr);
 	}
-	void GraphicsContextOpenGL::BindProgramPipeline(IGraphicsPipeline* p)
+	void GraphicsContextOpenGL::BindGraphicsPipeline(IGraphicsPipeline* p)
 	{
 		auto nativePipeline = static_cast<GraphicsPipelineOpenGL*>(p);
 		glBindVertexArray(nativePipeline->getVAOId());
+		glBindProgramPipeline(nativePipeline->getId());
+	}
+	void GraphicsContextOpenGL::BindComputePipeline(IComputePipeline* p)
+	{
+		auto nativePipeline = static_cast<ComputePipelineOpenGL*>(p);
 		glBindProgramPipeline(nativePipeline->getId());
 	}
 	void GraphicsContextOpenGL::BindIndexBuffer(IBuffer* b)
@@ -165,6 +171,10 @@ namespace lira::graphics
 			params.baseVertex,
 			params.baseInstance
 		);
+	}
+	void GraphicsContextOpenGL::Dispatch(uint32_t xCount, uint32_t yCount, uint32_t zCount)
+	{
+		glDispatchCompute(xCount, yCount, zCount);
 	}
 	std::shared_ptr<IShader> GraphicsContextOpenGL::CreateShader(EShaderStage s, const std::string_view& source)
 	{
