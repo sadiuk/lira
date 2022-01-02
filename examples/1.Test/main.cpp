@@ -53,27 +53,9 @@ int main()
 		}
 	);
 	
-	auto a = strlen(R"(#version 460 core
-layout(location = 0) in vec2 pos;
-layout(location = 1) in vec3 color;
-layout(location = 0) out vec3 fragColor;
-
-uniform float rand;
-out gl_PerVertex
-{
-  vec4 gl_Position;
-  float gl_PointSize;
-  float gl_ClipDistance[];
-};
-
-void main()
-{
-	fragColor = color * rand;
-	gl_Position = vec4(pos.x + 0.5 * gl_InstanceID, pos.y, 0, 1);
-})");
 	auto fs = std::make_shared<lira::fs::FilesystemSTD>();
-	auto vertexFile = fs->CreateFile("C:/dev/lira/examples/1.Test/vertex.vert", lira::fs::IFile::ECreateFlags::READ);
-	auto fragmentFile = fs->CreateFile("C:/dev/lira/examples/1.Test/fragment.frag", lira::fs::IFile::ECreateFlags::READ);
+	auto vertexFile = fs->CreateFile("vertex.vert", lira::fs::IFile::ECreateFlags::READ);
+	auto fragmentFile = fs->CreateFile("fragment.frag", lira::fs::IFile::ECreateFlags::READ);
 	char* vertexSource = new char[vertexFile->GetSize() + 1];
 	char* fragmentSource = new char[fragmentFile->GetSize() + 1];
 	vertexSource[vertexFile->GetSize()] = '\0';
@@ -101,9 +83,10 @@ void main()
 		
 		auto r = rand() / float(RAND_MAX);
 		context->BindIndexBuffer(indexBuffer.get());
-		context->BindProgramPipeline(pipeline.get());
+		context->BindGraphicsPipeline(pipeline.get());
 		pipeline->SetUniform(IGraphicsPipeline::EStage::VERTEX, "rand", r);
 		context->Draw(params);
 		context->SwapBuffers(window.get());
 	}
 }
+extern "C" {  _declspec(dllexport) int NvOptimusEnablement = 0x00000001; }

@@ -69,11 +69,6 @@ export namespace lira::fs
 		{
 			auto seek = fseek(m_handle, pos, SEEK_SET);
 			auto count = fread(buffer, 1, size, m_handle);
-			if (feof(m_handle))
-				printf("Error reading test.bin: unexpected end of file\n");
-			else if (ferror(m_handle)) {
-				perror("Error reading test.bin");
-			}
 			return count;
 		}
 		size_t Write(size_t pos, size_t size, const void* buffer) override
