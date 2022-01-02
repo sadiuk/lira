@@ -10,7 +10,7 @@ export namespace lira::graphics
 	{
 		uint32_t m_id;
 		uint32_t m_vaoId;
-		std::unordered_map<std::string, uint32_t> m_cachedUniformLocations;
+		std::unordered_map<EStage, std::unordered_map<std::string, uint32_t>> m_cachedUniformLocations;
 		std::map<EStage, uint32_t> m_shaderIDs;
 	private:
 

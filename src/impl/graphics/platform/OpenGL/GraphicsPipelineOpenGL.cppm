@@ -12,8 +12,9 @@ namespace lira::graphics
 {
 	int GraphicsPipelineOpenGL::getCachedLocation(EStage stage, const std::string_view& name)
 	{
-		auto it = m_cachedUniformLocations.find(std::string(name));
-		if (it != m_cachedUniformLocations.end())
+		auto st = m_cachedUniformLocations.find(stage);
+		auto it = st->second.find(std::string(name));
+		if (it != st->second.end())
 		{
 			return it->second;
 		}
@@ -22,7 +23,7 @@ namespace lira::graphics
 			int location = glGetUniformLocation(getShaderId(stage), name.data());
 			if (location != -1)
 			{
-				m_cachedUniformLocations.insert(std::make_pair(name, location));
+				st->second.insert(std::make_pair(name, location));
 			}
 			return location;
 		}
@@ -74,6 +75,7 @@ namespace lira::graphics
 			return;
 		}
 		}
+		m_cachedUniformLocations.insert(std::make_pair(static_cast<EStage>(stage), std::unordered_map<std::string, uint32_t>()));
 		m_shaderIDs.insert(std::make_pair(static_cast<EStage>(stage), shader_native->GetId()));
 	}
 	void GraphicsPipelineOpenGL::SetVertexAttributesLayout(const std::vector<VertexAttribute>& layout)
