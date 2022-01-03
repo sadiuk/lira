@@ -6,6 +6,7 @@ set(LIRA_GRAPHICS_SOURCES
 	export/graphics/IComputePipeline.ixx
 	export/graphics/IShader.ixx
 	export/graphics/IBuffer.ixx
+	export/graphics/ITexture.ixx
 	export/graphics/GraphicsCommon.ixx
 	
 	impl/graphics/IGraphicsContext.cppm
@@ -19,6 +20,8 @@ set(LIRA_GRAPHICS_SOURCES
 	impl/graphics/platform/OpenGL/ShaderOpenGL.cppm
 	impl/graphics/platform/OpenGL/BufferOpenGL.ixx
 	impl/graphics/platform/OpenGL/BufferOpenGL.cppm
+	impl/graphics/platform/OpenGL/TextureOpenGL.ixx
+	impl/graphics/platform/OpenGL/TextureOpenGL.cppm
 	)
 
 set(LIRA_UI_SOURCES

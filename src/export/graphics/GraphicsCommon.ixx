@@ -49,6 +49,33 @@ export namespace lira::graphics
 		TRIANGLES_ADJACENCY,
 		PATCHES
 	};
+	enum ETextureType
+	{
+		TEXTURE_1D,
+		TEXTURE_2D,
+		TEXTURE_3D,
+		TEXTURE_CUBE_MAP,
+		TEXTURE_1D_ARRAY,
+		TEXTURE_2D_ARRAY,
+		TEXTURE_CUBE_MAP_ARRAY,
+		TEXTURE_2D_MULTISAMPLE,
+		TEXTURE_2D_MULTISAMPLE_ARRAY
+	};
+	enum ETextureMinFilter
+	{
+		NEAREST,
+		LINEAR,
+		NEAREST_MIPMAP_NEAREST,
+		NEAREST_MIPMAP_LINEAR,
+		LINEAR_MIPMAP_LINEAR,
+		LINEAR_MIPMAP_NEAREST
+	};
+	enum ETextureMagFilter
+	{
+		NEAREST,
+		LINEAR
+	};
+
 
 
 	struct DrawIndexedParams
