@@ -6,7 +6,7 @@ set(LIRA_GRAPHICS_SOURCES
 	export/graphics/IComputePipeline.ixx
 	export/graphics/IShader.ixx
 	export/graphics/IBuffer.ixx
-	export/graphics/Common.ixx
+	export/graphics/GraphicsCommon.ixx
 	
 	impl/graphics/IGraphicsContext.cppm
 	impl/graphics/platform/OpenGL/GraphicsContextOpenGL.ixx
@@ -34,7 +34,7 @@ set(LIRA_THREAD_SOURCES
 	impl/thread/IThreadRequestProcessor.ixx
 )
 
-set(LIRA_FS_SSOURCES
+set(LIRA_FS_SOURCES
 	export/fs/IFile.ixx
 	export/fs/IFilesystem.ixx
 
@@ -51,12 +51,19 @@ set(LIRA_MATH_SOURCES
 
 )
 
+set(LIRA_CORE_SOURCES
+	export/core/Buffer.ixx
+	export/core/CoreCommon.ixx
+
+)
+
 add_library	(lira 
 			${LIRA_GRAPHICS_SOURCES} 
 			${LIRA_UI_SOURCES} 
 			${LIRA_THREAD_SOURCES}
 			${LIRA_MATH_SOURCES}
-			${LIRA_FS_SSOURCES}
+			${LIRA_FS_SOURCES}
+			${LIRA_CORE_SOURCES}
 			)
 target_include_directories(lira PUBLIC 
 	${LIRA_ROOT_PATH}/src

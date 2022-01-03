@@ -56,15 +56,13 @@ int main()
 	auto fs = std::make_shared<lira::fs::FilesystemSTD>();
 	auto vertexFile = fs->CreateFile("vertex.vert", lira::fs::IFile::ECreateFlags::READ);
 	auto fragmentFile = fs->CreateFile("fragment.frag", lira::fs::IFile::ECreateFlags::READ);
-	char* vertexSource = new char[vertexFile->GetSize() + 1];
-	char* fragmentSource = new char[fragmentFile->GetSize() + 1];
-	vertexSource[vertexFile->GetSize()] = '\0';
-	fragmentSource[fragmentFile->GetSize()] = '\0';
+	lira::core::Buffer vertexSource(vertexFile->GetSize() + 1);
+	lira::core::Buffer fragmentSource(fragmentFile->GetSize() + 1);
 	vertexFile->Read(0, vertexFile->GetSize(), vertexSource);
 	fragmentFile->Read(0, fragmentFile->GetSize(), fragmentSource);
 
-	auto vertShader = context->CreateShader(EShaderStage::VERTEX, vertexSource);
-	auto fragShader = context->CreateShader(EShaderStage::FRAGMENT, fragmentSource);
+	auto vertShader = context->CreateShader(EShaderStage::VERTEX, (const char*)vertexSource.Get());
+	auto fragShader = context->CreateShader(EShaderStage::FRAGMENT, (const char*)fragmentSource.Get());
 	pipeline->AttachShader(std::move(vertShader));
 	pipeline->AttachShader(std::move(fragShader));
 

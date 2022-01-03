@@ -1,6 +1,7 @@
 #include <cstdio>
 export module lira.fs.platform.std.FileSTD;
 import lira.fs.IFile;
+import lira.core.Buffer;
 import std.core;
 
 
@@ -67,13 +68,25 @@ export namespace lira::fs
 
 		size_t Read(size_t pos, size_t size, void* buffer) override
 		{
-			auto seek = fseek(m_handle, pos, SEEK_SET);
-			auto count = fread(buffer, 1, size, m_handle);
-			return count;
+			fseek(m_handle, pos, SEEK_SET);
+			return fread(buffer, 1, size, m_handle);
 		}
 		size_t Write(size_t pos, size_t size, const void* buffer) override
 		{
+			fseek(m_handle, pos, SEEK_SET);
 			return fwrite(buffer, 1, size, m_handle);
+		}
+		size_t Read(size_t pos, size_t size, lira::core::Buffer& buffer) override
+		{
+			fseek(m_handle, pos, SEEK_SET);
+			auto count = fread(buffer.Get(), 1, size, m_handle);
+			return count;
+		}
+		size_t Write(size_t pos, size_t size, const lira::core::Buffer& buffer) override
+		{
+			fseek(m_handle, pos, SEEK_SET);
+			auto count = fwrite(buffer.Get(), 1, size, m_handle);
+			return count;
 		}
 
 		~FileSTD()

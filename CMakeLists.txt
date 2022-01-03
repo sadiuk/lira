@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(lira C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_C_STANDARD 11)
 
 find_package(OpenGL REQUIRED)
 
@@ -14,10 +15,10 @@ set(MSVC_OPTIONS "/experimental:module")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${MSVC_OPTIONS}")
 endif()
 
+
 add_subdirectory(src)
 add_subdirectory(third_party)
 add_subdirectory(examples)
-
 
 #add_library(lira)
 
