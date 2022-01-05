@@ -7,6 +7,7 @@ import lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
 import lira.graphics.platform.OpenGL.ComputePipelineOpenGL;
 import lira.graphics.platform.OpenGL.ShaderOpenGL;
 import lira.graphics.platform.OpenGL.BufferOpenGL;
+import lira.graphics.platform.OpenGL.TextureOpenGL;
 import lira.graphics.IGraphicsContext;
 import lira.graphics.IGraphicsPipeline;
 import lira.ui.platform.GLFW.WindowGLFW;
@@ -127,11 +128,13 @@ namespace lira::graphics
 	{
 		auto nativePipeline = static_cast<GraphicsPipelineOpenGL*>(p);
 		glBindVertexArray(nativePipeline->getVAOId());
+		nativePipeline->BindAttachedBindings();
 		glBindProgramPipeline(nativePipeline->getId());
 	}
 	void GraphicsContextOpenGL::BindComputePipeline(IComputePipeline* p)
 	{
 		auto nativePipeline = static_cast<ComputePipelineOpenGL*>(p);
+		nativePipeline->BindAttachedBindings();
 		glBindProgramPipeline(nativePipeline->getId());
 	}
 	void GraphicsContextOpenGL::BindIndexBuffer(IBuffer* b)
@@ -176,6 +179,10 @@ namespace lira::graphics
 	{
 		glDispatchCompute(xCount, yCount, zCount);
 	}
+	std::shared_ptr<ITexture> GraphicsContextOpenGL::CreateTexture(ITexture::CreationParams&& params)
+	{
+		return std::make_shared<TextureOpenGL>(std::move(params));
+	}
 	std::shared_ptr<IShader> GraphicsContextOpenGL::CreateShader(EShaderStage s, const std::string_view& source)
 	{
 		return std::make_shared<ShaderOpenGL>(s, source);
@@ -184,9 +191,13 @@ namespace lira::graphics
 	{
 		return std::make_shared<BufferOpenGL>();
 	}
-	std::shared_ptr<IGraphicsPipeline> GraphicsContextOpenGL::CreateProgramPipeline()
+	std::shared_ptr<IGraphicsPipeline> GraphicsContextOpenGL::CreateGraphicsPipeline()
 	{
 		return std::make_shared<GraphicsPipelineOpenGL>();
+	}
+	std::shared_ptr<IComputePipeline> GraphicsContextOpenGL::CreateComputePipeline()
+	{
+		return std::make_shared<ComputePipelineOpenGL>();
 	}
 	void GraphicsContextOpenGL::AllocateBuffer(IBuffer* buffer, uint32_t sizeInBytes, const void* data)
 	{
@@ -206,15 +217,15 @@ namespace lira::graphics
 	uint32_t GraphicsContextOpenGL::getNativeAttachmentType(std::underlying_type_t<EFBOAttachmentType> t)
 	{
 		uint32_t res = 0;
-		if (t & EFBOAttachmentType::COLOR_BUFFER)
+		if (t & (uint8_t)EFBOAttachmentType::COLOR_BUFFER)
 		{
 			res |= GL_COLOR_BUFFER_BIT;
 		}
-		if (t & EFBOAttachmentType::DEPTH_BUFFER)
+		if (t & (uint8_t)EFBOAttachmentType::DEPTH_BUFFER)
 		{
 			res |= GL_DEPTH_BUFFER_BIT;
 		}
-		if (t & EFBOAttachmentType::STENCIL_BUFFER)
+		if (t & (uint8_t)EFBOAttachmentType::STENCIL_BUFFER)
 		{
 			res |= GL_STENCIL_BUFFER_BIT;
 		}
@@ -224,27 +235,27 @@ namespace lira::graphics
 	{
 		switch (s)
 		{
-			case VERTEX:
+			case EShaderStage::VERTEX:
 			{
 				return GL_VERTEX_SHADER;
 			}
-			case FRAGMENT:
+			case EShaderStage::FRAGMENT:
 			{
 				return GL_FRAGMENT_SHADER;
 			}
-			case TESSELATION_EVALUATION:
+			case EShaderStage::TESSELATION_EVALUATION:
 			{
 				return GL_TESS_EVALUATION_SHADER;
 			}
-			case TESSELATION_CONTROL:
+			case EShaderStage::TESSELATION_CONTROL:
 			{
 				return GL_TESS_CONTROL_SHADER;
 			}
-			case GEOMETRY:
+			case EShaderStage::GEOMETRY:
 			{
 				return GL_GEOMETRY_SHADER;
 			}
-			case COMPUTE:
+			case EShaderStage::COMPUTE:
 			{
 				return GL_COMPUTE_SHADER;
 			}
@@ -255,18 +266,18 @@ namespace lira::graphics
 	{
 		switch (mode)
 		{
-		case POINTS: return GL_POINTS;
-		case LINE_STRIP: return GL_LINE_STRIP;
-		case LINE_LOOP: return GL_LINE_LOOP;
-		case LINES: return GL_LINES;
-		case LINE_STRIP_ADJACENCY: return GL_LINE_STRIP_ADJACENCY;
-		case LINES_ADJACENCY: return GL_LINES_ADJACENCY;
-		case TRIANGLE_STRIP: return GL_TRIANGLE_STRIP;
-		case TRIANGLE_FAN: return GL_TRIANGLE_FAN;
-		case TRIANGLES: return GL_TRIANGLES;
-		case TRIANGLE_STRIP_ADJACENCY: return GL_TRIANGLE_STRIP_ADJACENCY;
-		case TRIANGLES_ADJACENCY: return GL_TRIANGLES_ADJACENCY;
-		case PATCHES: return GL_PATCHES;
+		case EDrawMode::POINTS:						return GL_POINTS;
+		case EDrawMode::LINE_STRIP:					return GL_LINE_STRIP;
+		case EDrawMode::LINE_LOOP:					return GL_LINE_LOOP;
+		case EDrawMode::LINES:						return GL_LINES;
+		case EDrawMode::LINE_STRIP_ADJACENCY:		return GL_LINE_STRIP_ADJACENCY;
+		case EDrawMode::LINES_ADJACENCY:			return GL_LINES_ADJACENCY;
+		case EDrawMode::TRIANGLE_STRIP:				return GL_TRIANGLE_STRIP;
+		case EDrawMode::TRIANGLE_FAN:				return GL_TRIANGLE_FAN;
+		case EDrawMode::TRIANGLES:					return GL_TRIANGLES;
+		case EDrawMode::TRIANGLE_STRIP_ADJACENCY:	return GL_TRIANGLE_STRIP_ADJACENCY;
+		case EDrawMode::TRIANGLES_ADJACENCY:		return GL_TRIANGLES_ADJACENCY;
+		case EDrawMode::PATCHES:					return GL_PATCHES;
 		default:
 			assert(false);
 		}
@@ -275,16 +286,111 @@ namespace lira::graphics
 	{
 		switch (dt)
 		{
-		case INT8: return GL_BYTE;
-		case UINT8: return GL_UNSIGNED_BYTE;
-		case INT16: return GL_SHORT;
-		case UINT116: return GL_UNSIGNED_SHORT;
-		case INT32: return GL_INT;
-		case UINT32: return GL_UNSIGNED_INT;
-		case FLOAT32: return GL_FLOAT;
-		case FLOAT64: return GL_DOUBLE;
+		case EDataType::INT8:		return GL_BYTE;
+		case EDataType::UINT8:		return GL_UNSIGNED_BYTE;
+		case EDataType::INT16:		return GL_SHORT;
+		case EDataType::UINT116:	return GL_UNSIGNED_SHORT;
+		case EDataType::INT32:		return GL_INT;
+		case EDataType::UINT32:		return GL_UNSIGNED_INT;
+		case EDataType::FLOAT32:	return GL_FLOAT;
+		case EDataType::FLOAT64:	return GL_DOUBLE;
 		default:
 			assert(false); // TODO other type enums
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeTextureType(ETextureType t)
+	{
+		switch (t)
+		{
+		case ETextureType::TEXTURE_1D:
+		{
+			return GL_TEXTURE_1D;
+		}
+		case ETextureType::TEXTURE_2D:
+		{
+
+			return GL_TEXTURE_2D;
+		}
+		case ETextureType::TEXTURE_3D:
+		{
+			return GL_TEXTURE_3D;
+		}
+		case ETextureType::TEXTURE_CUBE_MAP:
+		{
+			return GL_TEXTURE_CUBE_MAP;
+		}
+		case ETextureType::TEXTURE_2D_MULTISAMPLE:
+		{
+			return GL_TEXTURE_2D_MULTISAMPLE;
+		}
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeTextureMinFilter(ETextureMinFilter f)
+	{
+		switch (f)
+		{
+		case ETextureMinFilter::NEAREST:				return GL_NEAREST;
+		case ETextureMinFilter::LINEAR:					return GL_LINEAR;
+		case ETextureMinFilter::NEAREST_MIPMAP_NEAREST: return GL_NEAREST_MIPMAP_NEAREST;
+		case ETextureMinFilter::NEAREST_MIPMAP_LINEAR:	return GL_NEAREST_MIPMAP_LINEAR;
+		case ETextureMinFilter::LINEAR_MIPMAP_LINEAR:	return GL_LINEAR_MIPMAP_LINEAR;
+		case ETextureMinFilter::LINEAR_MIPMAP_NEAREST:	return GL_LINEAR_MIPMAP_NEAREST;
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeTextureMagFilter(ETextureMagFilter f)
+	{
+		switch (f)
+		{
+		case ETextureMagFilter::NEAREST:	return GL_NEAREST;
+		case ETextureMagFilter::LINEAR:		return GL_LINEAR;
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeTextureWrapMode(ETextureWrapMode m)
+	{
+		switch (m)
+		{
+		case ETextureWrapMode::CLAMP_TO_EDGE:	return GL_CLAMP_TO_EDGE;
+		case ETextureWrapMode::CLAMP_TO_BORDER: return GL_CLAMP_TO_BORDER;
+		case ETextureWrapMode::REPEAT:			return GL_REPEAT;
+		case ETextureWrapMode::MIRROR:			return GL_MIRRORED_REPEAT;
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeTextureFormat(ETextureFormat f)
+	{
+		switch (f)
+		{
+		case ETextureFormat::R8_UNORM:		return GL_R8;
+		case ETextureFormat::R8_SNORM:		return GL_R8_SNORM;
+		case ETextureFormat::R16_UNORM:		return GL_R16;
+		case ETextureFormat::R16_SNORM:		return GL_R16_SNORM;
+		case ETextureFormat::RG8_UNORM:		return GL_RG8;
+		case ETextureFormat::RG8_SNORM:		return GL_RG8_SNORM;
+		case ETextureFormat::RG16_UNORM:	return GL_RG16;
+		case ETextureFormat::RG16_SNORM:	return GL_RG16_SNORM;
+		case ETextureFormat::RGB8_UNORM:	return GL_RGB8;
+		case ETextureFormat::RGB8_SNORM:	return GL_RGB8_SNORM;
+		case ETextureFormat::RGB16_UNORM:	return GL_RGB16;
+		case ETextureFormat::RGB16_SNORM:	return GL_RGB16_SNORM;
+		case ETextureFormat::RGBA8_UNORM:	return GL_RGBA8;
+		case ETextureFormat::RGBA8_SNORM:	return GL_RGBA8_SNORM;
+		case ETextureFormat::RGBA16_UNORM:	return GL_RGBA16;
+		case ETextureFormat::RGBA16_SNORM:	return GL_RGBA16_SNORM;
+		case ETextureFormat::SRGB8_UNORM:	return GL_SRGB8;
+		case ETextureFormat::SRGBA8_UNORM:	return GL_SRGB8_ALPHA8;
+		case ETextureFormat::R32_F:			return GL_R32F;
+		case ETextureFormat::RG32_F:		return GL_RG32F;
+		case ETextureFormat::RGB32_F:		return GL_RGB32F;
+		case ETextureFormat::RGBF32_F:		return GL_RGBA32F;
+		default: assert(false);
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeAccessMode(EAccessMode f)
+	{
+		switch (f)
+		{
+		case EAccessMode::READ: return GL_READ_ONLY;
+		case EAccessMode::WRITE: return GL_WRITE_ONLY;
+		case EAccessMode::READ_WRITE: return GL_READ_WRITE;
 		}
 	}
 }

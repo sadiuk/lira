@@ -26,9 +26,11 @@ export namespace lira::graphics
 		void Draw(const DrawIndexedParams& params) override;
 		void Dispatch(uint32_t xCount, uint32_t yCount, uint32_t zCount) override;
 
+		std::shared_ptr<ITexture> CreateTexture(ITexture::CreationParams&& params) override;
 		std::shared_ptr<IShader> CreateShader(EShaderStage stage, const std::string_view& source) override;
 		std::shared_ptr<IBuffer> CreateBuffer() override;
-		std::shared_ptr<IGraphicsPipeline> CreateProgramPipeline() override;
+		std::shared_ptr<IGraphicsPipeline> CreateGraphicsPipeline() override;
+		std::shared_ptr<IComputePipeline>  CreateComputePipeline() override;
 
 		void AllocateBuffer(IBuffer* buffer, uint32_t sizeInBytes, const void* data = nullptr) override;
 		void FillBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, const void* data) override;
@@ -41,6 +43,12 @@ export namespace lira::graphics
 		static uint32_t getNativeShaderStage(EShaderStage s);
 		static uint32_t getNativeDrawingMode(EDrawMode mode);
 		static uint32_t getNativeDataType(EDataType dt);
+		static uint32_t getNativeTextureType(ETextureType t);
+		static uint32_t getNativeTextureMinFilter(ETextureMinFilter f);
+		static uint32_t getNativeTextureMagFilter(ETextureMagFilter f);
+		static uint32_t getNativeTextureWrapMode(ETextureWrapMode m);
+		static uint32_t getNativeTextureFormat(ETextureFormat f);
+		static uint32_t getNativeAccessMode(EAccessMode f);
 	};
 }
 

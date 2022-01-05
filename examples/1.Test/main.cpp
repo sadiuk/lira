@@ -45,7 +45,7 @@ int main()
 	auto indexBuffer = context->CreateBuffer();
 	context->AllocateBuffer(indexBuffer.get(), sizeof(indices), indices);
 
-	auto pipeline = context->CreateProgramPipeline();
+	auto pipeline = context->CreateGraphicsPipeline();
 	pipeline->SetVertexAttributesLayout(
 		{
 		IGraphicsPipeline::VertexAttribute { vtxBuffer, 2, EDataType::FLOAT32, false, 5 * sizeof(float) },
@@ -66,6 +66,15 @@ int main()
 	pipeline->AttachShader(std::move(vertShader));
 	pipeline->AttachShader(std::move(fragShader));
 
+	auto computeFile = fs->CreateFile("compute.comp", lira::fs::IFile::ECreateFlags::READ);
+	lira::core::Buffer computeSource(fragmentFile->GetSize() + 1);
+	computeFile->Read(0, computeFile->GetSize(), computeSource);
+	auto compPipeline = context->CreateComputePipeline();
+	auto compShader = context->CreateShader(EShaderStage::COMPUTE, (const char*)computeSource.Get());
+	compPipeline->AttachShader(std::move(compShader));
+	
+	//compPipeline->
+
 	context->SetClearColor(1, 0, 0, 1);
 
 	DrawIndexedParams params;
@@ -73,17 +82,49 @@ int main()
 	params.dataType = EDataType::UINT32;
 	params.count = 6;
 	params.instanceCount = 2;
+	
+	ITexture::CreationParams texParams;
+	texParams.type = ETextureType::TEXTURE_2D;
+	texParams.minFilter = ETextureMinFilter::LINEAR;
+	texParams.magFilter = ETextureMagFilter::LINEAR;
+	texParams.wrapS = ETextureWrapMode::CLAMP_TO_EDGE;
+	texParams.wrapT = ETextureWrapMode::CLAMP_TO_EDGE;
+	texParams.format = ETextureFormat::RGBA8_SNORM;
+	texParams.width = 1024;
+	texParams.height = 1024;
+	texParams.arrayLevels = 1;
+	texParams.generateMipmaps = true;
+	auto texture = context->CreateTexture(ITexture::CreationParams(texParams));
+
+	IPipeline::ShaderBinding texBinding;
+	texBinding.unit = 0;
+	texBinding.bindingType = EShaderBindingType::IMAGE_TEXTURE;
+	texBinding.imageParams.texture = texture.get();
+	texBinding.imageParams.layered = false;
+	texBinding.imageParams.arrayLayer = 0;
+	texBinding.imageParams.mipmapLevel = 0;
+	texBinding.imageParams.accessMode = EAccessMode::READ_WRITE;
+	texBinding.imageParams.textureFormat = ETextureFormat::RGBA8_SNORM;
+
+	compPipeline->SetShaderBindingLayout(std::vector<IPipeline::ShaderBinding>{
+		texBinding
+	});
+
+
 	while (window->IsOpen())
 	{
 		window->PollEvents();
 
-		context->Clear(lira::graphics::COLOR_BUFFER);
+		context->Clear((uint32_t)lira::graphics::EFBOAttachmentType::COLOR_BUFFER);
 		
 		auto r = rand() / float(RAND_MAX);
 		context->BindIndexBuffer(indexBuffer.get());
 		context->BindGraphicsPipeline(pipeline.get());
 		pipeline->SetUniform(IGraphicsPipeline::EStage::VERTEX, "rand", r);
 		context->Draw(params);
+
+		context->BindComputePipeline(compPipeline.get());
+		context->Dispatch(64, 64, 1);
 		context->SwapBuffers(window.get());
 	}
 }

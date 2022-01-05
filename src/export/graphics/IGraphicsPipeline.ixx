@@ -1,13 +1,15 @@
 export module lira.graphics.IGraphicsPipeline;
 import lira.graphics.IShader;
 import lira.graphics.IBuffer;
+import lira.graphics.ITexture;
+import lira.graphics.IPipeline;
 import lira.graphics.Common;
 import lira.math.Types;
 import std.core;
 import std.memory;
 export namespace lira::graphics
 {
-	class IGraphicsPipeline
+	class IGraphicsPipeline : virtual public IPipeline
 	{
 	public:
 		enum EStage : uint8_t
@@ -27,7 +29,6 @@ export namespace lira::graphics
 			uint32_t stride; // distance between consecutive attributes of the same type
 		};
 		virtual void SetVertexAttributesLayout(const std::vector<VertexAttribute>& layout) = 0;
-		virtual void AttachShader(std::shared_ptr<IShader>&& shader) = 0;
 
 		virtual bool SetUniform(EStage stage, const std::string_view& name, float value) = 0;
 		virtual bool SetUniform(EStage stage, const std::string_view& name, math::f2 value) = 0;

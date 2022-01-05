@@ -1,13 +1,14 @@
 export module lira.graphics.IComputePipeline;
 import lira.graphics.IShader;
 import lira.graphics.IBuffer;
+import lira.graphics.IPipeline;
 import lira.graphics.Common;
 import lira.math.Types;
 import std.core;
 import std.memory;
 export namespace lira::graphics
 {
-	class IComputePipeline
+	class IComputePipeline : virtual public IPipeline
 	{
 	public:
 		virtual void AttachShader(std::shared_ptr<IShader>&& shader) = 0;

@@ -43,7 +43,7 @@ namespace lira::graphics
 		auto* shader_native = static_cast<ShaderOpenGL*>(shader.get());
 		switch (stage)
 		{
-		case COMPUTE:
+		case EShaderStage::COMPUTE:
 		{
 			glUseProgramStages(m_id, GL_COMPUTE_SHADER_BIT, shader_native->GetId());
 			return;

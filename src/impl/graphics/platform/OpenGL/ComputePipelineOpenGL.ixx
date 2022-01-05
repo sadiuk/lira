@@ -1,4 +1,5 @@
 export module lira.graphics.platform.OpenGL.ComputePipelineOpenGL;
+import lira.graphics.platform.OpenGL.PipelineOpenGL;
 import lira.graphics.IComputePipeline;
 import lira.graphics.Common;
 import lira.math.Types;
@@ -6,7 +7,7 @@ import std.memory;
 import std.core;
 export namespace lira::graphics
 {
-	class ComputePipelineOpenGL : public IComputePipeline
+	class ComputePipelineOpenGL : public IComputePipeline, public PipelineOpenGL
 	{
 		uint32_t m_id;
 		std::unordered_map<std::string, uint32_t> m_cachedUniformLocations;

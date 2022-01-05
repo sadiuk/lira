@@ -27,9 +27,10 @@ export namespace lira::core
 			m_buffer = (std::byte*)malloc(size);
 			memset(m_buffer, fill, m_size);
 		}
-		Buffer(std::byte* data, size_t size) : m_buffer(data), m_size(size)
+		Buffer(std::byte* data, size_t size) :  m_size(size)
 		{
-		
+			m_buffer = (std::byte*)malloc(size);
+			memcpy(m_buffer, data, size);
 		}
 		~Buffer()
 		{

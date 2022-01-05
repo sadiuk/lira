@@ -1,12 +1,13 @@
 export module lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
-import lira.graphics.IGraphicsPipeline;
+import lira.graphics.platform.OpenGL.PipelineOpenGL;
 import lira.graphics.Common;
+import lira.graphics.IGraphicsPipeline;
 import lira.math.Types;
 import std.memory;
 import std.core;
 export namespace lira::graphics
 {
-	class GraphicsPipelineOpenGL : public IGraphicsPipeline
+	class GraphicsPipelineOpenGL : public IGraphicsPipeline, public PipelineOpenGL
 	{
 		uint32_t m_id;
 		uint32_t m_vaoId;
@@ -21,12 +22,12 @@ export namespace lira::graphics
 			if (val != m_shaderIDs.end()) return val->second;
 			return -1;
 		}
+		//void BindAttachedBindings();
 	public:
 		GraphicsPipelineOpenGL();
 		~GraphicsPipelineOpenGL();
+		void SetVertexAttributesLayout(const std::vector<VertexAttribute>& layout) override;
 		void AttachShader(std::shared_ptr<IShader>&& shader) override;
-		void SetVertexAttributesLayout(const std::vector<VertexAttribute>& layout);
-
 		uint32_t getId() const { return m_id; }
 		uint32_t getVAOId() const { return m_vaoId; }
 

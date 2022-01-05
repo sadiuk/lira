@@ -4,6 +4,7 @@ set(LIRA_GRAPHICS_SOURCES
 	export/graphics/IGraphicsContext.ixx
 	export/graphics/IGraphicsPipeline.ixx
 	export/graphics/IComputePipeline.ixx
+	export/graphics/IPipeline.ixx
 	export/graphics/IShader.ixx
 	export/graphics/IBuffer.ixx
 	export/graphics/ITexture.ixx
@@ -15,6 +16,8 @@ set(LIRA_GRAPHICS_SOURCES
 	impl/graphics/platform/OpenGL/GraphicsPipelineOpenGL.ixx
 	impl/graphics/platform/OpenGL/GraphicsPipelineOpenGL.cppm
 	impl/graphics/platform/OpenGL/ComputePipelineOpenGL.ixx
+	impl/graphics/platform/OpenGL/PipelineOpenGL.ixx
+	impl/graphics/platform/OpenGL/PipelineOpenGL.cppm
 	impl/graphics/platform/OpenGL/ComputePipelineOpenGL.cppm
 	impl/graphics/platform/OpenGL/ShaderOpenGL.ixx
 	impl/graphics/platform/OpenGL/ShaderOpenGL.cppm

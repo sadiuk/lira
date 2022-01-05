@@ -4,6 +4,7 @@ module lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsPipelineOpenGL;
 import lira.graphics.platform.OpenGL.ShaderOpenGL;
 import lira.graphics.platform.OpenGL.BufferOpenGL;
+import lira.graphics.platform.OpenGL.TextureOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import lira.math.Types;
 import std.memory;
@@ -44,32 +45,32 @@ namespace lira::graphics
 		auto* shader_native = static_cast<ShaderOpenGL*>(shader.get());
 		switch (stage)
 		{
-		case VERTEX:
+		case EShaderStage::VERTEX:
 		{
 			glUseProgramStages(m_id, GL_VERTEX_SHADER_BIT, shader_native->GetId());
 			break;
 		}
-		case FRAGMENT:
+		case EShaderStage::FRAGMENT:
 		{
 			glUseProgramStages(m_id, GL_FRAGMENT_SHADER_BIT, shader_native->GetId());
 			break;
 		}
-		case TESSELATION_EVALUATION:
+		case EShaderStage::TESSELATION_EVALUATION:
 		{
 			glUseProgramStages(m_id, GL_TESS_EVALUATION_SHADER_BIT, shader_native->GetId());
 			break;
 		}
-		case TESSELATION_CONTROL:
+		case EShaderStage::TESSELATION_CONTROL:
 		{
 			glUseProgramStages(m_id, GL_TESS_CONTROL_SHADER_BIT, shader_native->GetId());
 			break;
 		}
-		case GEOMETRY:
+		case EShaderStage::GEOMETRY:
 		{
 			glUseProgramStages(m_id, GL_GEOMETRY_SHADER_BIT, shader_native->GetId());
 			break;
 		}
-		case COMPUTE:
+		case EShaderStage::COMPUTE:
 		{
 			assert(false);
 			return;

@@ -1,0 +1,12 @@
+#version 460 core
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+layout(location = 0, rgba8) uniform image2D out_image;
+
+void main()
+{
+	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
+	
+	imageStore(out_image, pixel_coords, vec4(sin(pixel_coords.x), cos(pixel_coords.y), 0, 1));
+}
