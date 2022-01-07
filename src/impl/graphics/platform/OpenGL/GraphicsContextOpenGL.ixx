@@ -17,6 +17,7 @@ export namespace lira::graphics
 		void BindGraphicsPipeline(IGraphicsPipeline* p) override;
 		void BindComputePipeline(IComputePipeline* p) override;
 		void BindIndexBuffer(IBuffer*) override;
+		void BindFramebuffer(IFramebuffer* fb, EAccessMode am) override;
 
 		void SwapBuffers(lira::ui::IWindow* window) override;
 		void SetClearColor(float r, float g, float b, float a) override;
@@ -25,7 +26,8 @@ export namespace lira::graphics
 		void Clear(std::underlying_type_t<EFBOAttachmentType> t) override;
 		void Draw(const DrawIndexedParams& params) override;
 		void Dispatch(uint32_t xCount, uint32_t yCount, uint32_t zCount) override;
-
+		
+		std::shared_ptr<IFramebuffer> CreateFramebuffer() override;
 		std::shared_ptr<ITexture> CreateTexture(ITexture::CreationParams&& params) override;
 		std::shared_ptr<IShader> CreateShader(EShaderStage stage, const std::string_view& source) override;
 		std::shared_ptr<IBuffer> CreateBuffer() override;
@@ -37,9 +39,8 @@ export namespace lira::graphics
 		void MemsetBufferSubdata(IBuffer* buffer, uint32_t offset, uint32_t size, uint8_t data) override;
 
 
-	private:
-		uint32_t getNativeAttachmentType(std::underlying_type_t<EFBOAttachmentType> t);
 	public:
+		static uint32_t getNativeAttachmentType(std::underlying_type_t<EFBOAttachmentType> t);
 		static uint32_t getNativeShaderStage(EShaderStage s);
 		static uint32_t getNativeDrawingMode(EDrawMode mode);
 		static uint32_t getNativeDataType(EDataType dt);
@@ -49,6 +50,8 @@ export namespace lira::graphics
 		static uint32_t getNativeTextureWrapMode(ETextureWrapMode m);
 		static uint32_t getNativeTextureFormat(ETextureFormat f);
 		static uint32_t getNativeAccessMode(EAccessMode f);
+		static uint32_t getNativeFramebufferAccessMode(EAccessMode f);
+		static uint32_t getNativeFBOAttachment(EFBOAttachment a);
 	};
 }
 

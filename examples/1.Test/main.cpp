@@ -67,7 +67,7 @@ int main()
 	pipeline->AttachShader(std::move(fragShader));
 
 	auto computeFile = fs->CreateFile("compute.comp", lira::fs::IFile::ECreateFlags::READ);
-	lira::core::Buffer computeSource(fragmentFile->GetSize() + 1);
+	lira::core::Buffer computeSource(computeFile->GetSize() + 1);
 	computeFile->Read(0, computeFile->GetSize(), computeSource);
 	auto compPipeline = context->CreateComputePipeline();
 	auto compShader = context->CreateShader(EShaderStage::COMPUTE, (const char*)computeSource.Get());
@@ -96,6 +96,10 @@ int main()
 	texParams.generateMipmaps = true;
 	auto texture = context->CreateTexture(ITexture::CreationParams(texParams));
 
+	auto fbo = context->CreateFramebuffer();
+	fbo->AttachTexture(texture, EFBOAttachment::COLOR_0);
+	context->BindFramebuffer(fbo.get(), EAccessMode::READ_WRITE);
+
 	IPipeline::ShaderBinding texBinding;
 	texBinding.unit = 0;
 	texBinding.bindingType = EShaderBindingType::IMAGE_TEXTURE;
@@ -123,8 +127,10 @@ int main()
 		pipeline->SetUniform(IGraphicsPipeline::EStage::VERTEX, "rand", r);
 		context->Draw(params);
 
-		context->BindComputePipeline(compPipeline.get());
-		context->Dispatch(64, 64, 1);
+
+		//context->BindComputePipeline(compPipeline.get());
+		//context->Dispatch(64, 64, 1);
+
 		context->SwapBuffers(window.get());
 	}
 }

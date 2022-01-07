@@ -8,6 +8,7 @@ import lira.graphics.platform.OpenGL.ComputePipelineOpenGL;
 import lira.graphics.platform.OpenGL.ShaderOpenGL;
 import lira.graphics.platform.OpenGL.BufferOpenGL;
 import lira.graphics.platform.OpenGL.TextureOpenGL;
+import lira.graphics.platform.OpenGL.FramebufferOpenGL;
 import lira.graphics.IGraphicsContext;
 import lira.graphics.IGraphicsPipeline;
 import lira.ui.platform.GLFW.WindowGLFW;
@@ -141,6 +142,11 @@ namespace lira::graphics
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, static_cast<BufferOpenGL*>(b)->GetId());
 	}
+	void GraphicsContextOpenGL::BindFramebuffer(IFramebuffer* fb, EAccessMode am)
+	{
+		auto fbNative = static_cast<FramebufferOpenGL*>(fb);
+		glBindFramebuffer(GraphicsContextOpenGL::getNativeFramebufferAccessMode(am), fbNative->GetId());
+	}
 	void GraphicsContextOpenGL::SwapBuffers(lira::ui::IWindow* window)
 	{
 		glfwSwapBuffers(static_cast<ui::WindowGLFW*>(window)->GetNative());
@@ -178,6 +184,10 @@ namespace lira::graphics
 	void GraphicsContextOpenGL::Dispatch(uint32_t xCount, uint32_t yCount, uint32_t zCount)
 	{
 		glDispatchCompute(xCount, yCount, zCount);
+	}
+	std::shared_ptr<IFramebuffer> GraphicsContextOpenGL::CreateFramebuffer()
+	{
+		return std::make_shared<FramebufferOpenGL>();
 	}
 	std::shared_ptr<ITexture> GraphicsContextOpenGL::CreateTexture(ITexture::CreationParams&& params)
 	{
@@ -391,6 +401,25 @@ namespace lira::graphics
 		case EAccessMode::READ: return GL_READ_ONLY;
 		case EAccessMode::WRITE: return GL_WRITE_ONLY;
 		case EAccessMode::READ_WRITE: return GL_READ_WRITE;
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeFramebufferAccessMode(EAccessMode f)
+	{
+		switch (f)
+		{
+		case EAccessMode::READ: return GL_READ_FRAMEBUFFER;
+		case EAccessMode::WRITE: return GL_DRAW_FRAMEBUFFER;
+		case EAccessMode::READ_WRITE: return GL_FRAMEBUFFER;
+		}
+	}
+	uint32_t GraphicsContextOpenGL::getNativeFBOAttachment(EFBOAttachment a)
+	{
+		switch (a)
+		{
+		case COLOR_0: return GL_COLOR_ATTACHMENT0;
+		case COLOR_1: return GL_COLOR_ATTACHMENT1;
+		case DEPTH: return GL_DEPTH_ATTACHMENT;
+		case STENCIL: return GL_STENCIL_ATTACHMENT;
 		}
 	}
 }

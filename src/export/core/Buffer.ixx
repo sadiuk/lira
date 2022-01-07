@@ -21,7 +21,6 @@ export namespace lira::core
 		{
 			return m_size;
 		}
-		Buffer() = default;
 		Buffer(size_t size, char fill = 0) : m_size(size)
 		{
 			m_buffer = (std::byte*)malloc(size);

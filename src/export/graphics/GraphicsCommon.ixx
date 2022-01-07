@@ -119,6 +119,24 @@ export namespace lira::graphics
 		WRITE,
 		READ_WRITE,
 	};
+	enum class EAttachmentTarget
+	{
+		TEXTURE_2D,
+		CUBE_MAP_PLUS_X,
+		CUBE_MAP_MINUS_X,
+		CUBE_MAP_PLUS_Y,
+		CUBE_MAP_MINUS_Y,
+		CUBE_MAP_PLUS_Z,
+		CUBE_MAP_MINUS_Z,
+	};
+	enum EFBOAttachment
+	{
+		COLOR_0,
+		COLOR_1,
+		DEPTH,
+		STENCIL
+	};
+
 
 
 
