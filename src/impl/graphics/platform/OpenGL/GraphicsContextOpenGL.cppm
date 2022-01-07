@@ -144,8 +144,15 @@ namespace lira::graphics
 	}
 	void GraphicsContextOpenGL::BindFramebuffer(IFramebuffer* fb, EAccessMode am)
 	{
-		auto fbNative = static_cast<FramebufferOpenGL*>(fb);
-		glBindFramebuffer(GraphicsContextOpenGL::getNativeFramebufferAccessMode(am), fbNative->GetId());
+		if (fb == nullptr)
+		{
+			glBindFramebuffer(GraphicsContextOpenGL::getNativeFramebufferAccessMode(am), 0);
+		}
+		else
+		{
+			auto fbNative = static_cast<FramebufferOpenGL*>(fb);
+			glBindFramebuffer(GraphicsContextOpenGL::getNativeFramebufferAccessMode(am), fbNative->GetId());
+		}
 	}
 	void GraphicsContextOpenGL::SwapBuffers(lira::ui::IWindow* window)
 	{
@@ -169,6 +176,14 @@ namespace lira::graphics
 	}
 	void GraphicsContextOpenGL::Draw(const DrawIndexedParams& params)
 	{
+		if (params.enableDepthTesting == true)
+		{
+			glEnable(GL_DEPTH_TEST);
+		}
+		else
+		{
+			glDisable(GL_DEPTH_TEST);
+		}
 		uint32_t nativeMode = getNativeDrawingMode(params.mode);
 		uint32_t nativeDataType = getNativeDataType(params.dataType);
 		glDrawElementsInstancedBaseVertexBaseInstance(

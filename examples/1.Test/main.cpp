@@ -82,6 +82,7 @@ int main()
 	params.dataType = EDataType::UINT32;
 	params.count = 6;
 	params.instanceCount = 2;
+	params.enableDepthTesting = false;
 	
 	ITexture::CreationParams texParams;
 	texParams.type = ETextureType::TEXTURE_2D;
@@ -89,9 +90,9 @@ int main()
 	texParams.magFilter = ETextureMagFilter::LINEAR;
 	texParams.wrapS = ETextureWrapMode::CLAMP_TO_EDGE;
 	texParams.wrapT = ETextureWrapMode::CLAMP_TO_EDGE;
-	texParams.format = ETextureFormat::RGBA8_SNORM;
-	texParams.width = 1024;
-	texParams.height = 1024;
+	texParams.format = ETextureFormat::SRGBA8_UNORM;
+	texParams.width = 600;
+	texParams.height = 400;
 	texParams.arrayLevels = 1;
 	texParams.generateMipmaps = true;
 	auto texture = context->CreateTexture(ITexture::CreationParams(texParams));
@@ -114,7 +115,13 @@ int main()
 		texBinding
 	});
 
-
+	float r = 1;
+	context->Clear((uint32_t)lira::graphics::EFBOAttachmentType::COLOR_BUFFER);
+	context->BindIndexBuffer(indexBuffer.get());
+	context->BindGraphicsPipeline(pipeline.get());
+	pipeline->SetUniform(IGraphicsPipeline::EStage::VERTEX, "rand", r);
+	context->Draw(params);
+	context->BindFramebuffer(nullptr, EAccessMode::READ_WRITE);
 	while (window->IsOpen())
 	{
 		window->PollEvents();

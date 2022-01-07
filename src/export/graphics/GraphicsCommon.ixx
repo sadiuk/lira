@@ -149,6 +149,7 @@ export namespace lira::graphics
 		uint32_t offset = 0;
 		uint32_t baseVertex = 0;
 		uint32_t baseInstance = 0;
+		bool enableDepthTesting = true;
 	};
 
 
