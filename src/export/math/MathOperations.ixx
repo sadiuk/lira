@@ -27,4 +27,71 @@ export namespace lira::math
 		return res;
 	}
 
+
+	template<std::floating_point T>
+	constexpr T radians(T degrees)
+	{
+		return degrees / (T)180 * std::numbers::pi_v<T>;
+	}
+	template<std::floating_point T>
+	constexpr T degrees(T radians)
+	{
+		return radians / std::numbers::pi_v<T> * 180;
+	}
+
+	template<fundamental T, uint32_t Alignment, EMatrixOrder Order, any_vector2 V>
+	matrix<T, 3, 3, Alignment, Order> Translate(const matrix<T, 3, 3, Alignment, Order>& m, const V& vec)
+	{
+		matrix<T, 3, 3, Alignment, Order> res = m;
+		res[2][0] += vec[0];
+		res[2][1] += vec[1];
+		return res;
+	}
+	template<fundamental T, uint32_t Alignment, EMatrixOrder Order, any_vector3 V>
+	matrix<T, 4, 4, Alignment, Order> Translate(const matrix<T, 4, 4, Alignment, Order>& m, const V& vec)
+	{
+		matrix<T, 4, 4, Alignment, Order> res = m;
+		res[3][0] += vec[0];
+		res[3][1] += vec[1];
+		res[3][2] += vec[2];
+		return res;
+	}
+	template<fundamental T, uint32_t Alignment, EMatrixOrder Order, any_vector3 V>
+	matrix<T, 4, 3, Alignment, Order> Translate(const matrix<T, 4, 3, Alignment, Order>& m, const V& vec)
+	{
+		matrix<T, 4, 3, Alignment, Order> res = m;
+		res[3][0] += vec[0];
+		res[3][1] += vec[1];
+		res[3][2] += vec[2];
+		return res;
+	}
+
+	
+	template<fundamental T, uint32_t Alignment, EMatrixOrder Order, any_vector2 V>
+	matrix<T, 3, 3, Alignment, Order> Scale(const matrix<T, 3, 3, Alignment, Order>& m, const V& vec)
+	{
+		matrix<T, 3, 3, Alignment, Order> res = m;
+		res[0][0] *= vec[0];
+		res[1][1] *= vec[1];
+		return res;
+	}
+	template<fundamental T, uint32_t Alignment, EMatrixOrder Order, any_vector3 V>
+	matrix<T, 4, 4, Alignment, Order> Scale(const matrix<T, 4, 4, Alignment, Order>& m, const V& vec)
+	{
+		matrix<T, 4, 4, Alignment, Order> res = m;
+		res[0][0] *= vec[0];
+		res[1][1] *= vec[1];
+		res[2][2] *= vec[2];
+		return res;
+	}
+	template<fundamental T, uint32_t Alignment, EMatrixOrder Order, any_vector3 V>
+	matrix<T, 4, 3, Alignment, Order> Scale(const matrix<T, 4, 3, Alignment, Order>& m, const V& vec)
+	{
+		matrix<T, 4, 3, Alignment, Order> res = m;
+		res[0][0] *= vec[0];
+		res[1][1] *= vec[1];
+		res[2][2] *= vec[2];
+		return res;
+	}
+
 }

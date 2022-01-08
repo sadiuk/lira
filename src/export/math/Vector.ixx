@@ -84,6 +84,7 @@ export namespace lira::math
 		this_type& operator-=(const this_type& other) { x -= other.x; y -= other.y; return *this; }
 
 		T& operator[](uint32_t index) { return *(arr + index); }
+		const T& operator[](uint32_t index) const { return *(arr + index); }
 	};
 
 	template<fundamental T>
@@ -122,7 +123,8 @@ export namespace lira::math
 		this_type& operator+=(const this_type& other) { x += other.x; y += other.y; z+= other.z; return *this; }
 		this_type& operator-=(const this_type& other) { x -= other.x; y -= other.y; z-= other.z; return *this; }
 
-		T& operator[](uint32_t index) { return *(arr + index); }
+		T& operator[](uint32_t index) { return *(arr + index); }		
+		const T& operator[](uint32_t index) const { return *(arr + index); }
 	};
 
 	template<fundamental T>
@@ -162,6 +164,7 @@ export namespace lira::math
 		this_type& operator-=(const this_type& other) { x -= other.x; y -= other.y; z -= other.z; w -= other.w; return *this; }
 
 		T& operator[](uint32_t index) { return *(arr + index); }
+		const T& operator[](uint32_t index) const { return *(arr + index); }
 	};
 
 	// GLSL aligned vectors
@@ -256,6 +259,7 @@ export namespace lira::math
 	concept any_vector3 = is_vector3<T>::value;
 	template <typename T>
 	concept any_vector4 = is_vector4<T>::value;
+
 
 	// Resolve operation return type at compile time
 	template<typename T1, typename T2>

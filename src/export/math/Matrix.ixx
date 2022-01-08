@@ -14,7 +14,7 @@ export namespace lira::math
 	template<fundamental T, uint32_t RowCount, uint32_t ColCount, uint32_t Alignment = alignof(T), EMatrixOrder Order = EMatrixOrder::COLUMN_MAJOR>
 	struct alignas(Alignment) matrix
 	{
-
+		static_assert(Order == EMatrixOrder::COLUMN_MAJOR, "Row-major matrices not supported (yet??)");
 	};
 
 	template<fundamental T, uint32_t R, uint32_t C, uint32_t Alignment>
@@ -46,4 +46,13 @@ export namespace lira::math
 	};
 
 
+	/*
+		Type Traits
+	*/
+
+	template<typename>
+	struct is_matrix : std::false_type {};
+
+	template <typename T>
+	concept any_matrix = is_matrix<T>::value;
 }

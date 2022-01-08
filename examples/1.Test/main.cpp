@@ -138,6 +138,11 @@ int main()
 	auto a = test1 * test2;
 	auto m3 = m1 * m2;
 
+	mat4f m4(1);
+	m4 = Translate(m4, f3a(1, 2, 3));
+	m4 = Scale(m4, f3a(1, 2, 3));
+
+	auto rad = degrees(3.1415);
 	while (window->IsOpen())
 	{
 		window->PollEvents();
