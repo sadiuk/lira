@@ -1,4 +1,5 @@
 export module lira.math.Vector;
+import lira.math.Common;
 import std.core;
 
 export namespace lira::math
@@ -8,9 +9,6 @@ export namespace lira::math
 		No SIMD operations here yet
 		*******************
 	*/ 
-
-	template<typename T>
-	concept fundamental = std::is_fundamental_v<T>;
 
 	template<fundamental T, uint8_t Size>
 	struct vector_unaligned
@@ -84,6 +82,8 @@ export namespace lira::math
 		this_type& operator/=(T scalar) { x /= scalar; y /= scalar; return *this; }
 		this_type& operator+=(const this_type& other) { x += other.x; y += other.y; return *this; }
 		this_type& operator-=(const this_type& other) { x -= other.x; y -= other.y; return *this; }
+
+		T& operator[](uint32_t index) { return *(arr + index); }
 	};
 
 	template<fundamental T>
@@ -121,6 +121,8 @@ export namespace lira::math
 		this_type& operator/=(T scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
 		this_type& operator+=(const this_type& other) { x += other.x; y += other.y; z+= other.z; return *this; }
 		this_type& operator-=(const this_type& other) { x -= other.x; y -= other.y; z-= other.z; return *this; }
+
+		T& operator[](uint32_t index) { return *(arr + index); }
 	};
 
 	template<fundamental T>
@@ -158,6 +160,8 @@ export namespace lira::math
 		this_type& operator/=(T scalar) { x /= scalar; y /= scalar; z /= scalar; w /= scalar; return *this; }
 		this_type& operator+=(const this_type& other) { x += other.x; y += other.y; z += other.z; w += other.w; return *this; }
 		this_type& operator-=(const this_type& other) { x -= other.x; y -= other.y; z -= other.z; w -= other.w; return *this; }
+
+		T& operator[](uint32_t index) { return *(arr + index); }
 	};
 
 	// GLSL aligned vectors

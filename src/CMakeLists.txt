@@ -56,8 +56,9 @@ set(LIRA_FS_SOURCES
 set(LIRA_MATH_SOURCES
 	export/math/Types.ixx
 	export/math/Vector.ixx
-
-
+	export/math/Matrix.ixx
+	export/math/MathCommon.ixx
+	export/math/MathOperations.ixx
 )
 
 set(LIRA_CORE_SOURCES

@@ -6,6 +6,7 @@ import lira.fs.platform.std.FilesystemSTD;
 import lira.fs.IFile;
 import lira.math.Vector;
 import lira.math.Types;
+import lira.math.MathOperations;
 import std.core;
 import std.memory;
 
@@ -122,6 +123,21 @@ int main()
 	pipeline->SetUniform(IGraphicsPipeline::EStage::VERTEX, "rand", r);
 	context->Draw(params);
 	context->BindFramebuffer(nullptr, EAccessMode::READ_WRITE);
+
+	mat3x2f m1;
+	mat2x3f m2;
+	m1[0] = f2a(1, 4);
+	m1[1] = f2a(2, 5);
+	m1[2] = f2a(3, 6);
+
+	m2[0] = f3a(1, 2, 3);
+	m2[1] = f3a(4, 5, 6);
+
+
+	mat2f test1(1), test2(1);
+	auto a = test1 * test2;
+	auto m3 = m1 * m2;
+
 	while (window->IsOpen())
 	{
 		window->PollEvents();
