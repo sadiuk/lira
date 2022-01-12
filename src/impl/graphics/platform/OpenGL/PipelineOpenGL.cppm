@@ -3,6 +3,7 @@ module lira.graphics.platform.OpenGL.PipelineOpenGL;
 import lira.graphics.platform.OpenGL.PipelineOpenGL;
 import lira.graphics.platform.OpenGL.BufferOpenGL;
 import lira.graphics.platform.OpenGL.TextureOpenGL;
+import lira.graphics.platform.OpenGL.SamplerOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import std.core;
 
@@ -41,7 +42,9 @@ export namespace lira::graphics
 			case EShaderBindingType::SAMPLER:
 			{
 				auto textureOpenGL = static_cast<TextureOpenGL*>(binding.samplerParams.texture);
+				auto samplerOpenGL = static_cast<SamplerOpenGL*>(binding.samplerParams.sampler);
 				glBindTextureUnit(binding.unit, textureOpenGL->GetId());
+				glBindSampler(binding.unit, samplerOpenGL->GetId());
 				break;
 			}
 			case EShaderBindingType::IMAGE_TEXTURE:

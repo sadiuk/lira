@@ -4,6 +4,7 @@ module lira.graphics.platform.OpenGL.TextureOpenGL;
 import lira.graphics.platform.OpenGL.TextureOpenGL;
 import lira.graphics.platform.OpenGL.GraphicsContextOpenGL;
 import lira.graphics.ITexture;
+import std.core;
 
 export namespace lira::graphics
 {
@@ -35,20 +36,6 @@ export namespace lira::graphics
 			break;
 		}
 		}
-		glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GraphicsContextOpenGL::getNativeTextureWrapMode(params.wrapS));
-		glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GraphicsContextOpenGL::getNativeTextureWrapMode(params.wrapT));
-		if (params.type == ETextureType::TEXTURE_3D)
-		{
-			glTextureParameteri(m_id, GL_TEXTURE_WRAP_R, GraphicsContextOpenGL::getNativeTextureWrapMode(params.wrapR));
-		}
-		if (params.wrapS == ETextureWrapMode::CLAMP_TO_BORDER ||
-			params.wrapT == ETextureWrapMode::CLAMP_TO_BORDER ||
-			params.wrapR == ETextureWrapMode::CLAMP_TO_BORDER)
-		{
-			glTextureParameterfv(m_id, GL_TEXTURE_BORDER_COLOR, params.borderColor.data());
-		}
-		glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GraphicsContextOpenGL::getNativeTextureMinFilter(params.minFilter));
-		glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GraphicsContextOpenGL::getNativeTextureMagFilter(params.magFilter));
 		if (params.generateMipmaps)
 		{
 			glGenerateTextureMipmap(m_id);

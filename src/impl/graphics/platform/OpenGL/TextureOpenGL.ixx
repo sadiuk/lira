@@ -1,5 +1,6 @@
 export module lira.graphics.platform.OpenGL.TextureOpenGL;
 import lira.graphics.ITexture;
+import std.core;
 
 export namespace lira::graphics
 {

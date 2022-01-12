@@ -8,6 +8,7 @@ set(LIRA_GRAPHICS_SOURCES
 	export/graphics/IShader.ixx
 	export/graphics/IBuffer.ixx
 	export/graphics/ITexture.ixx
+	export/graphics/ISampler.ixx
 	export/graphics/IFramebuffer.ixx
 	export/graphics/GraphicsCommon.ixx
 	
@@ -26,6 +27,8 @@ set(LIRA_GRAPHICS_SOURCES
 	impl/graphics/platform/OpenGL/BufferOpenGL.cppm
 	impl/graphics/platform/OpenGL/TextureOpenGL.ixx
 	impl/graphics/platform/OpenGL/TextureOpenGL.cppm
+	impl/graphics/platform/OpenGL/SamplerOpenGL.ixx
+	impl/graphics/platform/OpenGL/SamplerOpenGL.cppm
 	impl/graphics/platform/OpenGL/FramebufferOpenGL.ixx
 	impl/graphics/platform/OpenGL/FramebufferOpenGL.cppm
 	)

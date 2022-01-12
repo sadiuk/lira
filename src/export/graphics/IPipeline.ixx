@@ -2,6 +2,7 @@ export module lira.graphics.IPipeline;
 import lira.graphics.IShader;
 import lira.graphics.IBuffer;
 import lira.graphics.ITexture;
+import lira.graphics.ISampler;
 import lira.graphics.Common;
 import lira.math.Types;
 import std.core;
@@ -30,7 +31,8 @@ export namespace lira::graphics
 			};
 			struct SamplerBindingParams
 			{
-				ITexture* texture = nullptr;
+				ISampler* sampler;
+				ITexture* texture;
 			};
 			uint32_t unit = 0;
 			EShaderBindingType bindingType;
