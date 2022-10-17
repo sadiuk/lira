@@ -35,6 +35,9 @@ set(LIRA_GRAPHICS_SOURCES
 
 set(LIRA_UI_SOURCES
 	export/ui/IWindow.ixx
+	export/ui/IWindow.cppm
+	export/ui/IEventReceiver.ixx
+	export/ui/KeyCodes.ixx
 
 	impl/ui/platform/GLFW/WindowGLFW.ixx
 	impl/ui/platform/GLFW/WindowGLFW.cppm
@@ -62,6 +65,7 @@ set(LIRA_MATH_SOURCES
 	export/math/Matrix.ixx
 	export/math/MathCommon.ixx
 	export/math/MathOperations.ixx
+	export/math/CameraMath.ixx
 )
 
 set(LIRA_CORE_SOURCES
@@ -70,6 +74,9 @@ set(LIRA_CORE_SOURCES
 
 )
 
+set(LIRA_THIRD_PARTY_SOURCES ../third_party/OBJ_Loader/Source/OBJ_Loader.ixx)
+
+
 add_library	(lira 
 			${LIRA_GRAPHICS_SOURCES} 
 			${LIRA_UI_SOURCES} 
@@ -77,6 +84,8 @@ add_library	(lira
 			${LIRA_MATH_SOURCES}
 			${LIRA_FS_SOURCES}
 			${LIRA_CORE_SOURCES}
+
+			${LIRA_THIRD_PARTY_SOURCES}
 			)
 target_include_directories(lira PUBLIC 
 	${LIRA_ROOT_PATH}/src

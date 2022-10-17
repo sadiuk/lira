@@ -1,6 +1,7 @@
-macro( createEXE EXE_NAME SOURCES )
+function( createEXE EXE_NAME SOURCES )
 	project(${EXE_NAME})
-	add_executable(${EXE_NAME} main.cpp ${SOURCES})
+	set( _SOURCES ${SOURCES} ${ARGN} )
+	add_executable(${EXE_NAME} main.cpp ${_SOURCES})
 	add_dependencies(${EXE_NAME} lira)
 	#target_include_directories(${EXE_NAME}
 	#	PUBLIC ../../src
@@ -9,4 +10,4 @@ macro( createEXE EXE_NAME SOURCES )
 	target_link_libraries(${EXE_NAME} lira)
 	find_package(OpenGL REQUIRED)
 	target_link_libraries(${EXE_NAME} ${OPENGL_LIBRARIES})
-endmacro()
+endfunction()

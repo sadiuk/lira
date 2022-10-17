@@ -5,4 +5,5 @@ export namespace lira::math
 {
 	template<typename T>
 	concept fundamental = std::is_fundamental_v<T>;
+
 }

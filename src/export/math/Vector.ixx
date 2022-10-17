@@ -55,6 +55,7 @@ export namespace lira::math
 		static constexpr int size = 2;
 	public:
 		vector_unaligned() {}
+		vector_unaligned(T el) : arr { el, el } {}
 		explicit vector_unaligned(T el1, T el2) : arr{ el1, el2 } {}
 		union
 		{
@@ -95,6 +96,7 @@ export namespace lira::math
 		static constexpr int size = 3;
 	public:
 		vector_unaligned() {}
+		vector_unaligned(T el) : arr { el, el, el } {}
 		explicit vector_unaligned(T el1, T el2, T el3) : arr{ el1, el2, el3 } {}
 		union
 		{
@@ -135,6 +137,7 @@ export namespace lira::math
 		static constexpr int size = 4;
 	public:
 		vector_unaligned() {}
+		vector_unaligned(T el) : arr { el, el, el, el } {}
 		explicit vector_unaligned(T el1, T el2, T el3, T el4) : arr{ el1, el2, el3, el4 } {}
 		union
 		{
@@ -262,31 +265,52 @@ export namespace lira::math
 
 
 	// Resolve operation return type at compile time
-	template<typename T1, typename T2>
-	struct out_type
+	template<any_vector T1, any_vector T2>
+	struct out_scalar_type
 	{
 		using type = decltype(T1::type(1) * T2::type(1));
 	};
-	template<typename T1, typename T2>
-	using out_type_t = out_type<T1, T2>::type;
+	template<any_vector T1, any_vector T2>
+	using out_scalar_type_t = out_scalar_type<T1, T2>::type;
+
+
+	template<any_vector T1, any_vector T2>
+	struct out_vector_type
+	{
+		using type = decltype(T1(T1::type(1))* T2(T2::type(1)));
+	};
+	template<any_vector T1, any_vector T2>
+	using out_vector_type_t = out_vector_type<T1, T2>::type;
+
+
 
 	// *********** Vector Functions *************
 
 	// This one works for both aligned and unaligned
 	template<any_vector2 V1, any_vector2 V2>
-	out_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
+	out_scalar_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y;
 	}
 	template<any_vector3 V1, any_vector3 V2>
-	out_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
+	out_scalar_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 	}
 	template<any_vector4 V1, any_vector4 V2>
-	out_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
+	out_scalar_type_t<V1, V2> dot(const V1& lhs, const V2& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
+	}
+
+	template<any_vector3 V1, any_vector3 V2>
+	out_vector_type_t<V1, V2> cross(const V1& a, const V2& b)
+	{
+		return out_vector_type_t<V1, V2>(
+			a.y * b.z - a.z * b.y, 
+			a.z * b.x - a.x * b.z, 
+			a.x * b.y - a.y * b.x
+		);
 	}
 
 

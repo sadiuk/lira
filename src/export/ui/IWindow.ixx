@@ -1,9 +1,13 @@
 export module lira.ui.IWindow;
 import std.core;
+import std.memory;
 export namespace lira::ui
 {
 	class IWindow
 	{
+		friend class IEventReceiver;
+		//TODO: Create a shared pointer that allows safe self-reference
+		void RegisterEventReceiver(const std::shared_ptr<IEventReceiver>& r);
 	public:
 		struct CreationParams
 		{
@@ -26,5 +30,7 @@ export namespace lira::ui
 		uint16_t m_width, m_height;
 		std::string m_caption;
 
+
+		std::shared_ptr<IEventReceiver> m_eventReceiver = nullptr;
 	};
 }

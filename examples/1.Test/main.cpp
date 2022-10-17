@@ -1,4 +1,6 @@
 #include <cstdlib>
+
+
 import lira.ui.IWindow;
 import lira.ui.platform.GLFW.WindowGLFW;
 import lira.graphics.IGraphicsContext;
@@ -7,14 +9,166 @@ import lira.fs.IFile;
 import lira.math.Vector;
 import lira.math.Types;
 import lira.math.MathOperations;
+import lira.math.CameraMath;
+import lira.ui.IEventReceiver;
+import lira.ui.KeyCodes;
+import lira.core.Common;
 import std.core;
-import std.memory;
+import std.memory;	
 
+import ModelLoader;
+
+using namespace lira;
 using namespace lira::graphics;
+using namespace lira::ui;
+using namespace lira::math;
+using namespace lira::core;
 
+
+class EventProcessor
+{
+	bool m_pressedKeys[KeyCode::KEY_COUNT];
+	bool m_pressedMouseButtons[MouseButton::MOUSE_BUTTON_COUNT];
+	float m_prevX, m_prevY, m_x, m_y;
+	bool m_firstMove = true;
+public:
+	void SetKeyState(KeyCode code, KeyState state)
+	{
+		m_pressedKeys[code] = static_cast<bool>(state);
+	}
+	void SetMousePosition(float posX, float posY)
+	{
+		m_prevX = m_x;
+		m_prevY = m_y;
+		m_x = posX;
+		m_y = posY;
+		//std::cout << "{ " << m_x << " " << m_y << " }\n";
+
+	}
+	void SetMouseClick(MouseButton button, KeyState state)
+	{
+		m_pressedMouseButtons[button] = state;
+		//std::cout << "MOUSE BUTTON CLICK: { " << m_x << " " << m_y << " }\n";
+	}
+
+	f2 GetMousePosition()
+	{
+		return f2(m_x, m_y);
+	}
+	bool IsKeyPressed(KeyCode code)
+	{
+		return m_pressedKeys[code];
+	}
+	bool isMouseButtonPressed(MouseButton button)
+	{
+		return m_pressedMouseButtons[button];
+	}
+};
+class EventReceiver : public IEventReceiver
+{
+public:
+	EventReceiver(IWindow* wnd, EventProcessor* processor) : IEventReceiver(wnd), m_processor(processor) {}
+private:
+
+	void OnKeyPressImpl(KeyCode key, KeyState state) override
+	{
+		m_processor->SetKeyState(key, state);
+		//std::cout << "Key " << key << " " << (state ? "pressed" : "released") << "\n";
+	}
+	void OnMouseMoveImpl(double mouseX, double mouseY) override
+	{
+		m_processor->SetMousePosition(mouseX, mouseY);
+	}
+	void OnMouseButtonClickImpl(MouseButton button, KeyState state) override
+	{
+		m_processor->SetMouseClick(button, state);
+	}
+	EventProcessor* m_processor;
+};
+
+class Camera
+{
+	f3 m_position;
+	f3 m_direction;
+	ref_ptr<EventProcessor> m_processor;
+	float m_moveSpeed;
+	float m_mouseSensitivity;
+
+	const f3 upHint = f3(0, 0, 1);
+
+	f2 m_prevMousePos{0};
+	f2 m_eulerAngles{0};
+
+	bool m_firstMove = true;
+
+	mat4f m_viewMatrix;
+	mat4f m_projectionMatrix;
+private:
+	f2 GetRelativeMovement(f2 pos)
+	{
+		if (m_firstMove)
+		{
+			m_firstMove = false;
+			m_prevMousePos = pos;
+			return { 0 };
+		}
+		f2 diff = pos - m_prevMousePos;
+		m_prevMousePos = pos;
+		return diff;
+	}
+public:
+	Camera(const ref_ptr<EventProcessor>& processor, float moveSpeed, float mouseSensitivity, const f3& pos, const f3& dir) : 
+		m_processor(processor), m_position(pos), m_direction(dir),
+		m_moveSpeed(moveSpeed), m_mouseSensitivity(mouseSensitivity)
+	{
+	
+	}
+	void Update(float deltaTime)
+	{
+		m_direction.x = sin(m_eulerAngles.x) * cos(m_eulerAngles.y);
+		m_direction.y = cos(m_eulerAngles.x);
+		m_direction.z = sin(m_eulerAngles.x) * sin(m_eulerAngles.y);
+		if (m_processor->IsKeyPressed(KEY_W))
+		{
+			m_position += m_direction * deltaTime * m_moveSpeed;
+		}
+		if (m_processor->IsKeyPressed(KEY_S))
+		{
+			m_position -= m_direction * deltaTime * m_moveSpeed;
+		}
+		if (m_processor->IsKeyPressed(KEY_A))
+		{
+			f3 left = cross(upHint, m_direction);
+			m_position += left * deltaTime * m_moveSpeed;
+		}
+		if (m_processor->IsKeyPressed(KEY_D))
+		{
+			f3 right = cross(m_direction, upHint);
+			m_position += right * deltaTime * m_moveSpeed;
+		}
+		
+		if (m_processor->isMouseButtonPressed(MouseButton::LEFT_MOUSE_BUTTON))
+		{
+			f2 mousePos = m_processor->GetMousePosition();
+			m_eulerAngles += GetRelativeMovement(mousePos) * m_mouseSensitivity;
+			std::cout << "Direction: " << m_direction.x << " " << m_direction.y << " " << m_direction.z << "\n";
+		}
+		else
+		{
+			m_firstMove = true;
+		}
+
+		m_viewMatrix = LookAt(m_direction, upHint);
+		m_projectionMatrix = Perspective(60.f, 0.01f, 100.f, true);
+	}
+};
+
+float moveSpeed = 1;
+float mouseSensitivity = 0.01;
+f3 startPos(1, 0, 0);
+f3 startDir(1, 0, 0);
 int main()
 {
-	using namespace lira::math;
 	i2 v(1, 2);
 	f2a va(1, 3);
 
@@ -23,16 +177,20 @@ int main()
 	auto k = dot(b, f);
 	//bool same = std::is_same_v<std::vector, std::array>;
 	lira::ui::IWindow::CreationParams wndParams; 
-	wndParams.width = 600;
-	wndParams.height = 400;
+	wndParams.width = 1200;
+	wndParams.height = 800;
 	wndParams.caption = "Test";
-	auto window = std::make_shared<lira::ui::WindowGLFW>(wndParams);
-
+	auto window = make_ref<lira::ui::WindowGLFW>(wndParams);
+	auto eventProcessor = make_ref<EventProcessor>();
+	auto receiver = make_ref<EventReceiver>(window.get(), eventProcessor.get());
+	auto camera = make_ref<Camera>(eventProcessor, moveSpeed, mouseSensitivity, startPos, startDir);
 	lira::graphics::IGraphicsContext::CreationParams ctxParams;
 	ctxParams.apiType = lira::graphics::EAPIType::OPENGL;
 	ctxParams.window = window.get();
 	auto context = lira::graphics::IGraphicsContext::Create(ctxParams);
 
+	//ModelLoader loader;
+	//auto model = loader.LoadModel("../../media/sponza/sponza.obj");
 
 	float vtc[] = {
 		-0.5, -0.5, 1, 0, 0,
@@ -54,7 +212,9 @@ int main()
 		}
 	);
 	
-	auto fs = std::make_shared<lira::fs::FilesystemSTD>();
+
+	
+	auto fs = make_ref<lira::fs::FilesystemSTD>();
 	auto vertexFile = fs->CreateFile("vertex.vert", lira::fs::IFile::ECreateFlags::READ);
 	auto fragmentFile = fs->CreateFile("fragment.frag", lira::fs::IFile::ECreateFlags::READ);
 	lira::core::Buffer vertexSource(vertexFile->GetSize() + 1);
@@ -87,10 +247,6 @@ int main()
 	
 	ITexture::CreationParams texParams;
 	texParams.type = ETextureType::TEXTURE_2D;
-	texParams.minFilter = ETextureMinFilter::LINEAR;
-	texParams.magFilter = ETextureMagFilter::LINEAR;
-	texParams.wrapS = ETextureWrapMode::CLAMP_TO_EDGE;
-	texParams.wrapT = ETextureWrapMode::CLAMP_TO_EDGE;
 	texParams.format = ETextureFormat::SRGBA8_UNORM;
 	texParams.width = 600;
 	texParams.height = 400;
@@ -159,6 +315,7 @@ int main()
 		//context->BindComputePipeline(compPipeline.get());
 		//context->Dispatch(64, 64, 1);
 
+		camera->Update(1);
 		context->SwapBuffers(window.get());
 	}
 }
