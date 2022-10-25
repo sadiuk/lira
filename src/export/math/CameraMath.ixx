@@ -7,7 +7,7 @@ import std.core;
 export namespace lira::math
 {
 	template<fundamental T>
-	matrix<T, 4, 4, alignof(vector_aligned<T, 4>), EMatrixOrder::COLUMN_MAJOR> LookAt(const vector_unaligned<T, 3>& forward, const vector_unaligned<T, 3>& upHint)
+	matrix<T, 4, 4, alignof(vector_aligned<T, 4>), EMatrixOrder::COLUMN_MAJOR> LookAt(const vector_unaligned<T, 3>& pos, const vector_unaligned<T, 3>& forward, const vector_unaligned<T, 3>& upHint)
 	{
 		matrix<T, 4, 4, alignof(vector_aligned<T, 4>), EMatrixOrder::COLUMN_MAJOR> ret(0);
 		vector_unaligned<T, 3> right = cross(forward, upHint);
@@ -15,7 +15,7 @@ export namespace lira::math
 		ret[0] = vector_unaligned<T, 4>(right.x,   right.y,   right.z,   0);
 		ret[1] = vector_unaligned<T, 4>(forward.x, forward.y, forward.z, 0);
 		ret[2] = vector_unaligned<T, 4>(up.x,      up.y,      up.z,      0);
-		ret[3] = vector_unaligned<T, 4>(0,         0,         0,         1);
+		ret[3] = vector_unaligned<T, 4>(pos.x,     pos.y,     pos.y,     1);
 		return ret;
 	}
 

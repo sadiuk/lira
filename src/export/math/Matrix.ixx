@@ -43,6 +43,7 @@ export namespace lira::math
 				}
 		}
 		vector_element_type& operator[](uint32_t index) { return vectors[index]; }
+		const vector_element_type& operator[](uint32_t index) const { return vectors[index]; }
 	};
 
 

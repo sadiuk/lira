@@ -2,7 +2,7 @@
 module ModelLoader;
 import ModelLoader;
 
-import OBJ_Loader;
+//import OBJ_Loader;
 
 import lira.math.Types;
 import std.core;
@@ -13,7 +13,7 @@ export ModelLoader::ModelData ModelLoader::LoadModel(const std::string& path)
     using namespace lira::math;
     ModelData model = {};
 
-    objl::Loader loader;
+    /*objl::Loader loader;
     
     bool loaded = loader.LoadFile(path);
     assert(loaded);
@@ -32,6 +32,6 @@ export ModelLoader::ModelData ModelLoader::LoadModel(const std::string& path)
             newMesh.vertices.push_back(attribs);
         }
         newMesh.indices = mesh.Indices;
-    }
+    }*/
     return model;
 }

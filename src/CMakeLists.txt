@@ -74,7 +74,7 @@ set(LIRA_CORE_SOURCES
 
 )
 
-set(LIRA_THIRD_PARTY_SOURCES ../third_party/OBJ_Loader/Source/OBJ_Loader.ixx)
+set(LIRA_THIRD_PARTY_SOURCES "")
 
 
 add_library	(lira 

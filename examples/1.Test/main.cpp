@@ -121,7 +121,7 @@ public:
 		m_processor(processor), m_position(pos), m_direction(dir),
 		m_moveSpeed(moveSpeed), m_mouseSensitivity(mouseSensitivity)
 	{
-	
+		UpdateMatrices();
 	}
 	void Update(float deltaTime)
 	{
@@ -158,15 +158,27 @@ public:
 			m_firstMove = true;
 		}
 
-		m_viewMatrix = LookAt(m_direction, upHint);
+		UpdateMatrices();
+	}
+	void UpdateMatrices()
+	{
+		m_viewMatrix = LookAt(m_position, m_direction, upHint);
 		m_projectionMatrix = Perspective(60.f, 0.01f, 100.f, true);
+	}
+	const mat4f& GetViewMatrix() const
+	{
+		return m_viewMatrix;
+	}
+	const mat4f& GetProjMatrix() const
+	{
+		return m_projectionMatrix;
 	}
 };
 
 float moveSpeed = 1;
 float mouseSensitivity = 0.01;
-f3 startPos(1, 0, 0);
-f3 startDir(1, 0, 0);
+f3 startPos(0, -1, 0);
+f3 startDir(0, 1, 0);
 int main()
 {
 	i2 v(1, 2);
@@ -305,6 +317,12 @@ int main()
 
 		context->Clear((uint32_t)lira::graphics::EFBOAttachmentType::COLOR_BUFFER);
 		
+		auto viewMatrix = camera->GetViewMatrix();
+		auto projMatrix = camera->GetProjMatrix();
+		f4 test(2, 0, 0, 1);
+		auto viewPos = viewMatrix * test;
+
+
 		auto r = rand() / float(RAND_MAX);
 		context->BindIndexBuffer(indexBuffer.get());
 		context->BindGraphicsPipeline(pipeline.get());

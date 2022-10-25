@@ -8,8 +8,8 @@ export namespace lira::math
 {
 	template<fundamental T, uint32_t D1, uint32_t D2, uint32_t D3, uint32_t Alignment1, uint32_t Alignment2>
 	constexpr matrix<T, D1, D3, alignof(T), EMatrixOrder::COLUMN_MAJOR> operator* (
-		matrix<T, D1, D2, Alignment1, EMatrixOrder::COLUMN_MAJOR> lhs,
-		matrix<T, D2, D3, Alignment2, EMatrixOrder::COLUMN_MAJOR> rhs
+		const matrix<T, D1, D2, Alignment1, EMatrixOrder::COLUMN_MAJOR>& lhs,
+		const matrix<T, D2, D3, Alignment2, EMatrixOrder::COLUMN_MAJOR>& rhs
 		)
 	{
 		matrix<T, D1, D3, alignof(T), EMatrixOrder::COLUMN_MAJOR> res;
@@ -22,6 +22,25 @@ export namespace lira::math
 				{
 					res[j][i] += lhs[k][j] * rhs[i][k];
 				}
+			}
+		}
+		return res;
+	}
+
+	template<fundamental T, uint32_t D1, uint32_t D2, uint32_t Alignment1>
+	constexpr vector_unaligned<T, D2> operator* (
+		const matrix<T, D1, D2, Alignment1, EMatrixOrder::COLUMN_MAJOR>& mat,
+		const vector_unaligned<T, D2>& vector
+		)
+	{
+		vector_unaligned<T, D2> res;
+		for (int i = 0; i < D2; i++)
+		{
+			res[i] = 0;
+			for (int j = 0; j < D1; j++)
+			{
+				res[i] += mat[i][j] * vector[i];
+
 			}
 		}
 		return res;

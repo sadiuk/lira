@@ -28,7 +28,7 @@ set(OBJ_LIB_NAME "OBJ-Loader")
 set(OBJ_INCLUDE_PATH ${OBJ_LIB_NAME}/Source)
 
 
-set(LIRA_THIRD_PARTY_SOURCES ${OBJ_INCLUDE_PATH}/OBJ_Loader.ixx)
+set(LIRA_THIRD_PARTY_SOURCES "")
 
 
 target_include_directories(lira PUBLIC third_party/glad/include third_party/glfw/include include)
