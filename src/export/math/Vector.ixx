@@ -97,6 +97,9 @@ export namespace lira::math
 	public:
 		vector_unaligned() {}
 		vector_unaligned(T el) : arr { el, el, el } {}
+		vector_unaligned(const this_type& vec) : arr { vec.x, vec.y, vec.z } {}
+		explicit vector_unaligned(const vector_unaligned<T, 2>& vec, T el) : arr { vec.x, vec.y, el } {}
+		explicit vector_unaligned(T el, const vector_unaligned<T, 2>& vec) : arr { el, vec.x, vec.y } {}
 		explicit vector_unaligned(T el1, T el2, T el3) : arr{ el1, el2, el3 } {}
 		union
 		{
@@ -137,7 +140,12 @@ export namespace lira::math
 		static constexpr int size = 4;
 	public:
 		vector_unaligned() {}
+		vector_unaligned(const this_type& other) : arr{ other.x, other.y, other.z, other.w } {}
 		vector_unaligned(T el) : arr { el, el, el, el } {}
+		explicit vector_unaligned(const vector_unaligned<T, 3>& vec, T el) : arr { vec.x, vec.y, vec.z, el } {}
+		explicit vector_unaligned(T el, const vector_unaligned<T, 3>& vec) : arr { el, vec.x, vec.y, vec.z } {}
+		explicit vector_unaligned(const vector_unaligned<T, 2>& vec1, const vector_unaligned<T, 2>& vec2) : arr { vec1.x, vec1.y, vec2.x, vec2.y } {}
+
 		explicit vector_unaligned(T el1, T el2, T el3, T el4) : arr{ el1, el2, el3, el4 } {}
 		union
 		{

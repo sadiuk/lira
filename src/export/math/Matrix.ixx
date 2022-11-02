@@ -33,12 +33,13 @@ export namespace lira::math
 		};
 
 		matrix() {}
+		matrix(const this_type& other) { std::memcpy(arr, other.arr, ColCount * RowCount * sizeof(type)); }
 		matrix(uint32_t mainDiagonalFill)
 		{
 			for (int i = 0; i < C; i++)
 				for (int j = 0; j < R; j++)
 				{
-					if (i == j) arr[i][j] = 1;
+					if (i == j) arr[i][j] = mainDiagonalFill;
 					else arr[i][j] = 0;
 				}
 		}

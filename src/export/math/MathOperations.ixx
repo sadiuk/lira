@@ -39,8 +39,7 @@ export namespace lira::math
 			res[i] = 0;
 			for (int j = 0; j < D1; j++)
 			{
-				res[i] += mat[i][j] * vector[i];
-
+				res[i] += mat[i][j] * vector[j];
 			}
 		}
 		return res;

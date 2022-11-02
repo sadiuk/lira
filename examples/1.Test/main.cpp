@@ -163,7 +163,10 @@ public:
 	void UpdateMatrices()
 	{
 		m_viewMatrix = LookAt(m_position, m_direction, upHint);
-		m_projectionMatrix = Perspective(60.f, 0.01f, 100.f, true);
+		m_projectionMatrix = Perspective(60.f, 0.1f, 100.f, true);
+		auto pos = m_viewMatrix * f4(0, 0, 0, 1);
+		pos = m_projectionMatrix * pos;
+		auto a = pos / pos.w;
 	}
 	const mat4f& GetViewMatrix() const
 	{
@@ -319,8 +322,8 @@ int main()
 		
 		auto viewMatrix = camera->GetViewMatrix();
 		auto projMatrix = camera->GetProjMatrix();
-		f4 test(2, 0, 0, 1);
-		auto viewPos = viewMatrix * test;
+		//f4 test(2, 0, 0, 1);
+		//auto viewPos = viewMatrix * test;
 
 
 		auto r = rand() / float(RAND_MAX);
